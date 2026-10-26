@@ -1,22 +1,23 @@
 ---
-name: reap-19-kernel-and-driver-exploitation-research
-description: REA prompt pack:  Kernel & driver exploitation research (7 ready-to-paste prompts). Use when doing reverse-engineering investigation of kernel & driver exploitation research with REA (rea.tools) via an AI coding agent.
+name: reap-19-kernel-and-driver-reachability-research
+description: REA prompt pack: Kernel and driver reachability research (7 ready-to-paste prompts). Use for a documented driver/kernel security review -- proving reachability and hardening -- with REA (rea.tools) via an AI coding agent.
 ---
 
-# REAP — 19. Kernel & driver exploitation research
+# REAP — 19. Kernel and driver reachability research
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
-> Authorized contexts only: your own vulnerable driver, a CVE you are validating
-> for a bug bounty, a CTF kernel challenge, or defensive hardening review.
-> "Exploitation research" here means proving reachability of a flaw and
-> documenting the primitive — not building public weaponized exploits.
+Authorized contexts only: your own driver under review, a CVE you are validating
+for a bug bounty, a CTF kernel challenge, or a defensive hardening review. See
+this project's authorized-use policy in `DISCLAIMER.md`. "Reachability
+research" here means proving a mechanism exists and documenting it — not
+building anything to run against a system you don't control.
 
-### Vulnerable-driver primitive analysis (BYOVD-style, own driver)
+### Driver read/write primitive analysis (own driver)
 
 ```text
-Use REA on <driver .sys> that I own/am authorized to assess (e.g. a known
-vulnerable driver used in my lab).
+Use REA on <driver .sys> that I own/am authorized to assess (e.g. a driver
+under review in my lab).
 
 Document the read/write primitive: which IOCTL gives arbitrary physical or
 virtual memory R/W, exactly how the handler validates (or fails to validate)
@@ -34,7 +35,7 @@ Use REA on <kernel binary / module version X> to check whether the fix for
 Locate the patched function, verify the added check exists and covers every
 caller path that reaches it, then search the rest of the binary for the same
 unchecked pattern (similar copy, same struct, different entry point). Report:
-fix present/absent, any bypass path found, and any sibling location still
+fix present/absent, any uncovered path found, and any sibling location still
 missing the check — each labeled hypothesis vs confirmed, with addresses.
 ```
 
@@ -59,7 +60,7 @@ Use REA on <kernel module / driver>. Enumerate every user-reachable entry point
 record: input validation depth (probe method, size checks, pointer
 dereference), state it touches, and privilege context.
 
-Rank the entry points by exploitable-risk with evidence for the ranking, and
+Rank the entry points by risk with evidence for the ranking, and
 name the top 3 worth a deeper source-level or crash-driven look.
 ```
 
@@ -89,7 +90,7 @@ hypothesis until validated.
 
 ```text
 Use REA on <ntoskrnl / win32k image or a documented syscall number> to
-explain how <NtUserXxx/NtXxx> handles attacker-controlled arguments: the
+explain how <NtUserXxx/NtXxx> handles caller-controlled arguments: the
 entry stub, parameter validation (probe, capture, alignment), the user-mode
 structures it reads, and the kernel objects it touches. Show the dispatch
 path with addresses and flag any argument that reaches a sensitive operation

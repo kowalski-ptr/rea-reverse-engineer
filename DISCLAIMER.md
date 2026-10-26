@@ -2,10 +2,11 @@
 
 ## Responsible use
 
-REA is built for lawful analysis: security research, malware and incident
-analysis, vulnerability research and coordinated disclosure, CTFs and education,
-interoperability, software preservation, and debugging or auditing software you
-own or are authorized to examine.
+REA is built for lawful analysis: **learning how real software is built so
+you can design and build your own for private use**, security research,
+malware and incident analysis, vulnerability research and coordinated
+disclosure, CTFs and education, interoperability, software preservation,
+and debugging or auditing software you own or are authorized to examine.
 
 The REA project does not support, and will not help with:
 

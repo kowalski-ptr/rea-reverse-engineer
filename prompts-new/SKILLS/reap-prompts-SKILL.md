@@ -1,13 +1,13 @@
 ---
 name: reap-prompts
-description: REAP master index: curated REA prompts for reverse engineering with AI coding agents (native binaries, Go/Rust source recovery, web/Electron, games, firmware, Android, kernel, malware, anti-cheat, protectors, cloning). Use when pointing an agent at RE work.
+description: REAP master index: curated REA prompts for learning how real software is built -- native binaries, Go/Rust source recovery, web/Electron, games, firmware, Android, kernel, cloning -- plus a security-education set (vulnerability review, incident-response triage, protection research) for your own software, CTFs, and authorized research. Use when pointing an agent at RE work.
 ---
 
 # REAP — REA Investigation Prompts (skill index)
 
-A curated collection of prompts for [REA](https://rea.tools/) — the toolset that lets your AI coding agent inspect how software works. Each pack below is a sibling skill folder in this directory; load the one matching the target, paste a prompt and replace <angle brackets>.
+A curated collection of prompts for [REA](https://rea.tools/) — the toolset that lets your AI coding agent learn how real software is built, so you can study the best patterns you find and build your own. Each pack below is a sibling skill folder in this directory; load the one matching the target, paste a prompt and replace <angle brackets>.
 
-> Use responsibly. Only analyze software you own or are explicitly authorized to test. Anti-cheat, DMA, DRM, kernel and vulnerability packs are for security research, interoperability, CTFs, bug bounties and testing your own software.
+> **Scope:** your own software or hardware, a CTF/crackme, a vendor-authorized bug bounty, or incident-response work you're permitted to do. This project's authorized-use policy (`DISCLAIMER.md`) applies to every pack below — lawful analysis and security education, never unauthorized access to someone else's running system or session.
 
 | Skill | Section | Prompts |
 |---|---|---|
@@ -23,14 +23,14 @@ A curated collection of prompts for [REA](https://rea.tools/) — the toolset th
 | `reap-09-kernel-analysis` | 9. Kernel analysis | 3 |
 | `reap-10-vulnerability-research` | 10. Vulnerability research | 5 |
 | `reap-11-electron-and-javascript` | 11. Electron & JavaScript | 11 |
-| `reap-12-anti-cheat-and-protection-research` | 12. Anti-cheat & protection research | 4 |
-| `reap-13-dma-and-hardware-assisted-cheat-research-defensive` | 13. DMA & hardware-assisted cheat research (defensive) | 4 |
-| `reap-14-software-cracking-research` | 14. Software cracking research | 3 |
+| `reap-12-software-protection-research` | 12. Software protection research | 4 |
+| `reap-13-hardware-memory-access-protection-research` | 13. Hardware memory-access protection research | 4 |
+| `reap-14-license-validation-research` | 14. License-validation research | 3 |
 | `reap-15-version-comparison-and-crash-work` | 15. Version comparison & crash work | 1 |
 | `reap-16-long-running-investigations` | 16. Long-running investigations | 1 |
-| `reap-17-malware-analysis` | 17. Malware analysis | 8 |
+| `reap-17-incident-response-sample-triage` | 17. Incident-response sample triage | 8 |
 | `reap-18-advanced-binary-exploration-and-deobfuscation` | 18. Advanced binary exploration & deobfuscation | 8 |
-| `reap-19-kernel-and-driver-exploitation-research` | 19. Kernel & driver exploitation research | 7 |
+| `reap-19-kernel-and-driver-reachability-research` | 19. Kernel and driver reachability research | 7 |
 | `reap-20-advanced-software-cloning-and-feature-reconstruction` | 20. Advanced software cloning & feature reconstruction | 5 |
 | `reap-21-protector-and-obfuscator-research` | 21. Protector & obfuscator research | 7 |
 | `reap-22-go-and-rust-binary-source-recovery` | 22. Go & Rust binary source recovery | 7 |
@@ -57,4 +57,4 @@ propose tests to verify it.
 3. **Separate fact / inference / unknown.** The three-bucket format keeps hypotheses honest.
 4. **Static first.** Say "do not execute the application" until you actually need runtime observation.
 5. **End with a deliverable.** SPEC.md, a reader script, a port plan, a minimal rebuild — a concrete artifact forces the agent to verify its own claims.
-6. **State the scope out loud.** "Lab machine I own", "offline single-player", "document, don't bypass" — the framing keeps results usable for research and reporting.
+6. **State the scope out loud.** "Lab machine I own", "offline single-player", "a documented assessment of my own product" — the framing keeps results usable for research and reporting.

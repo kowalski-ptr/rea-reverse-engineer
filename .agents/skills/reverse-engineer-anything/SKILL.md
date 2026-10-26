@@ -9,8 +9,10 @@ metadata:
 
 REA turns a shipped artifact into evidence: a binary, package, firmware
 image, or running target becomes functions, strings, call graphs, and cited
-facts instead of guesses. Reach for it the moment a claim depends on what
-actually shipped — a decompiled function, a requested runtime observation, a
+facts instead of guesses. That's how you learn from real, working software —
+study how it's actually built, then design and build your own from what you
+learned. Reach for REA the moment a claim depends on what actually
+shipped — a decompiled function, a requested runtime observation, a
 comparison against behavior no source file establishes — rather than on what
 the source *says* it should do.
 
