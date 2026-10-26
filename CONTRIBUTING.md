@@ -41,7 +41,7 @@ For analysis workflows and agent interfaces, follow the
 [performance priorities](AGENTS.md#performance). Explain the selected output
 scope, reuse/cache decisions, and relevant before/after measurements when these
 costs change.
-Use the [analysis optimization skill](.agents/skills/rea-analysis-optimization/SKILL.md)
+Use the [investigation efficiency skill](.agents/skills/rea-investigation-efficiency/SKILL.md)
 to locate provider and shared-workflow bottlenecks, preserve Evidence, and
 compare equivalent real tasks before claiming an improvement.
 
@@ -347,7 +347,7 @@ CI diagnosis. Packaging/setup/distribution changes additionally require
 matching real-provider lane. State which host/provider workflows ran.
 
 For CI/test correctness, drift, or performance investigations, use the
-[`rea-ci-tests-audit` contributor skill](.agents/skills/rea-ci-tests-audit/SKILL.md).
+[`rea-suite-integrity` contributor skill](.agents/skills/rea-suite-integrity/SKILL.md).
 It guides reproduction and comparable measurements before changing checks.
 
 `check:pr` reuses build and static-check outputs while executing the test suite
@@ -429,7 +429,7 @@ exact SHA. Ordinary main pushes cannot publish packages. An optional manual
 `release/VERSION` checkpoint retains explicit preparation and publication.
 
 For grouped release notes with verified contributor thanks, use the repository's
-`rea-changelog-update` skill in `.agents/skills/rea-changelog-update/`. Its inventory,
+`rea-release-chronicle` skill in `.agents/skills/rea-release-chronicle/`. Its inventory,
 credit checks, and finalization process are described in the release guide.
 
 Keep new implementation commits on main for the next release. The workflow

@@ -2,16 +2,21 @@
 name: reverse-engineer-anything
 description: Reverse engineer native, managed, Electron/JavaScript, packaged, firmware, and browser targets with REA, and build agent environments (AgentEnv bundles) of web applications from a live instance or a capture. Use shipped-artifact or requested runtime evidence to explain features, compare versions, decompile code, or guide a reconstruction. Skip REA for ordinary source-repository architecture analysis.
 metadata:
-  version: "49"
+  version: "50"
 ---
 
-# REA
+# REA — reverse engineer anything
 
-Use REA when a claim depends on a shipped binary or package, decompilation,
-requested runtime evidence, or comparison with
-behavior not established by available source. For ordinary analysis of a
-complete source repository, use normal repository tools and do not run REA
-readiness or provider commands.
+REA turns a shipped artifact into evidence: a binary, package, firmware
+image, or running target becomes functions, strings, call graphs, and cited
+facts instead of guesses. Reach for it the moment a claim depends on what
+actually shipped — a decompiled function, a requested runtime observation, a
+comparison against behavior no source file establishes — rather than on what
+the source *says* it should do.
+
+If the question is answerable from a complete source repository you already
+have open, skip REA entirely: use your normal repository tools, and don't run
+readiness checks or provider commands you don't need.
 
 ## Connect only when needed
 
@@ -392,25 +397,28 @@ before abandoning deep analysis or repeating the same cold import. The default
 `update_analysis_settings` using `ghidra.startup_timeout_ms`. Changing the
 server's launch environment instead requires a new REA process.
 
-## Work summary-first
+## Read the summary before you reach for the dossier
 
-Start with the default result and use its inline Evidence and graph context.
-For a JavaScript application or ELF layout whose size is unknown or large,
-call `analyze_javascript_application` or `inspect_binary_layout` with
-`"detail": "summary"`, then inspect the retained `parent_evidence_id` with
-`inspect_analysis_view`. Over MCP, `analyze_function` is summary-first without
-a flag: its default reply is the summary, and the complete dossier stays
-retained under `parent_evidence_id` for facet paging. Pass that ID as a
-`retained-evidence` reference to `compare_functions`, or inside
-`match_native_functions` `left_observations`/`right_observations`; request
-`"detail": "complete"` only when the dossier must travel inline, as
-`build_call_path` requires.
-Page module identities and select the returned `node_id` before requesting an
-item; a single file path can represent several graph roles. Do not repeat an
-identical analysis or rejected call without a changed input or resolved blocker.
-Recheck session state when a lifecycle change makes that status useful.
-Make a focused follow-up only when the
-returned result leaves a specific question unanswered.
+Every large result starts small on purpose: take the default reply and its
+inline Evidence and graph context before asking for more. When a JavaScript
+application or an ELF layout is of unknown or large size, call
+`analyze_javascript_application` or `inspect_binary_layout` with
+`"detail": "summary"` first, then inspect the retained `parent_evidence_id`
+through `inspect_analysis_view`. Over MCP, `analyze_function` is
+summary-first with no flag required — its default reply *is* the summary,
+and the complete dossier waits under `parent_evidence_id` for facet paging.
+Pass that same ID as a `retained-evidence` reference to `compare_functions`,
+or inside `match_native_functions`'s `left_observations`/`right_observations`.
+Ask for `"detail": "complete"` only when the dossier genuinely has to travel
+inline — the way `build_call_path` requires.
+
+Page module identities and pick the returned `node_id` before requesting an
+item; one file path can stand in for several distinct graph roles. Never
+repeat an identical analysis, or an already-rejected call, without a changed
+input or a resolved blocker — recheck session state only when a lifecycle
+change has actually made that worth doing. Make a follow-up call when, and
+only when, the result you already have leaves one specific question
+unanswered.
 
 If MCP reports `resource_constraint` with `details.resource: "transport"`, call
 `inspect_analysis_view` with its reported same-session Evidence reference for a
@@ -449,61 +457,67 @@ The agent client can independently require approval. Follow the declared request
 scope and the host's actual access requirements; use the recovery guide for an
 observed client-policy rejection.
 
-## Plan broader investigations
+## Running a multi-feature investigation
 
-For requests that span multiple features or subsystems, use a staged workflow:
+A request that spans several features or subsystems deserves a staged plan,
+not a single wide call:
 
-1. Turn the request into a checklist of questions and the evidence each answer
-   needs. Resolve target identity and constraints from the conversation and
-   workspace before asking for information again.
-2. Inspect the current REA session, artifact identity, saved analysis database,
-   bookmarks, and prior evidence. Reuse matching state; do not open duplicate
-   sessions or repeat identical analysis.
-3. Start with the smallest useful overview or inventory. Follow each question
-   from its entry point through relevant data and state changes to its result.
-   Batch related operations around a specific hypothesis, then expand only when
-   the returned evidence leaves a concrete gap.
-4. Inspect relevant packaged resources and configuration alongside code when
-   they affect the question. Use format-aware inventory and parsers; do not
-   infer behavior from filenames, strings, or layout alone.
-5. Corroborate a conclusion with the evidence type it requires. Use runtime
-   observation only when static evidence cannot answer the question and the
-   required host runtime and OS access are available. For JavaScript behavior,
-   run probes against the actual app through the available browser, Electron,
-   or process capture workflow.
-6. Decompose work into independent questions. When parallel workers are
-   available and the questions do not depend on one another, assign distinct
-   scopes, point workers to existing evidence, and ask them to return sources,
-   conclusions, and unresolved gaps. Otherwise, work sequentially.
-7. Keep a concise finding ledger linking each conclusion to Evidence IDs,
-   confidence/evidence type, search boundary, and remaining unknowns. Update
-   the shared index or investigation report so later passes can reuse results.
+1. **Turn the ask into a checklist.** Each question gets the evidence it
+   will need to answer it. Resolve target identity and constraints from the
+   conversation and workspace first — don't re-ask for what's already there.
+2. **Inherit before you open.** Inspect the current REA session, artifact
+   identity, saved analysis database, bookmarks, and prior evidence. Reuse
+   whatever already matches; never open a duplicate session or repeat an
+   identical analysis.
+3. **Start small, then follow the thread.** Open with the smallest useful
+   overview or inventory, then trace each question from its entry point
+   through the data and state changes that lead to its answer. Batch related
+   calls around one hypothesis at a time, and expand only once the evidence
+   you have leaves a concrete gap.
+4. **Read resources and configuration alongside code** whenever they bear on
+   the question — with format-aware inventory and real parsers. A filename
+   or a string is a lead, never a conclusion.
+5. **Corroborate with the right evidence type.** Reach for runtime
+   observation only once static evidence can't answer the question *and*
+   the required host runtime and OS access actually exist. For JavaScript
+   behavior specifically, probe the real app through the browser, Electron,
+   or process-capture workflow rather than reasoning about it statically.
+6. **Split only what's actually independent.** When parallel workers are
+   available and two questions don't depend on each other, hand them
+   distinct scopes, point each at existing evidence, and ask for sources,
+   conclusions, and unresolved gaps back. Otherwise, stay sequential — a
+   false split costs more than it saves.
+7. **Keep one finding ledger.** Link every conclusion to its Evidence IDs,
+   confidence and evidence type, search boundary, and remaining unknowns,
+   and update the shared index or investigation report so later passes
+   build on it instead of starting over.
 
-Before finishing, revisit the original checklist. Mark each question as
-answered, partially answered, or unresolved based on its evidence; keep
-bounded negative searches bounded, and do not describe a broad investigation
-as complete while required questions remain open.
+Before you call it done, revisit the original checklist line by line. Mark
+each question answered, partially answered, or unresolved on the strength of
+its evidence. A bounded negative search stays bounded — it doesn't become
+proof of absence — and a broad investigation is never "complete" while a
+required question is still open.
 
-## Read only the relevant guide
+## Load only the guide the question needs
 
-- Native binaries, managed assemblies, archives, and extraction:
-  [references/native-and-artifacts.md](references/native-and-artifacts.md)
-- ASARs, extracted JavaScript, feature tracing, and version comparison:
-  [references/javascript-applications.md](references/javascript-applications.md)
-- Android APK declarations, classes, methods, and static references:
-  [references/android-applications.md](references/android-applications.md)
-- Native instrumentation, debugger and process capture; browser/Electron
-  observation; static/runtime comparison:
-  [references/runtime-observation.md](references/runtime-observation.md)
-- Evidence paging, comparisons, residual unknowns, and verification:
-  [references/evidence-workflows.md](references/evidence-workflows.md)
-- Agent environments (AgentEnv bundles) of a web application, recorded from
-  a live instance or a HAR:
-  [references/environments.md](references/environments.md)
+| The question is about…                                                              | Read                                                                             |
+| ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| Native binaries, managed assemblies, archives, extraction                           | [references/native-and-artifacts.md](references/native-and-artifacts.md)       |
+| ASARs, extracted JavaScript, feature tracing, version comparison                    | [references/javascript-applications.md](references/javascript-applications.md) |
+| Android APK declarations, classes, methods, static references                       | [references/android-applications.md](references/android-applications.md)       |
+| Native instrumentation, debugger/process capture, browser/Electron observation, static-vs-runtime comparison | [references/runtime-observation.md](references/runtime-observation.md)         |
+| Evidence paging, comparisons, residual unknowns, verification                        | [references/evidence-workflows.md](references/evidence-workflows.md)           |
+| Agent environments (AgentEnv bundles) recorded from a live instance or a HAR          | [references/environments.md](references/environments.md)                       |
 
-## Finish the task
+Each guide exists so you don't have to hold the whole catalog in context at
+once — load the one row that matches, not the table.
 
-Explain findings in plain language and tie them to returned evidence. When the
-user asks to build something, use normal coding tools and separate observed
-behavior from design choices. Close an opened native session with
-`close_binary` when the investigation is complete.
+## Close the loop
+
+State findings in plain language and tie each one back to the evidence that
+supports it — a reader should be able to go from your claim to the exact
+Evidence ID without asking. When the user wants something built from what
+you found, switch to normal coding tools and keep observed behavior clearly
+separate from design choices you're making on top of it. Once the
+investigation is actually done, close any opened native session with
+`close_binary` — don't leave it dangling for the next task to clean up.
