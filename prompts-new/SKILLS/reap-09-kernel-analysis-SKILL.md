@@ -7,6 +7,9 @@ description: REA prompt pack:  Kernel analysis (3 ready-to-paste prompts). Use w
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own driver, a CTF kernel challenge, or a target you're
+otherwise authorized to study — see `DISCLAIMER.md`.
+
 ### Driver inspection (Windows / Linux)
 
 ```text

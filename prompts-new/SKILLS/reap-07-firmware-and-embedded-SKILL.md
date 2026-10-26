@@ -7,6 +7,9 @@ description: REA prompt pack:  Firmware & embedded (3 ready-to-paste prompts). U
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own hardware, or a target you're otherwise authorized to
+study — see `DISCLAIMER.md`.
+
 ### Firmware image triage
 
 ```text

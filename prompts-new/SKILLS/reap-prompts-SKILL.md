@@ -7,7 +7,7 @@ description: REAP master index: curated REA prompts for learning how real softwa
 
 A curated collection of prompts for [REA](https://rea.tools/) — the toolset that lets your AI coding agent learn how real software is built, so you can study the best patterns you find and build your own. Each pack below is a sibling skill folder in this directory; load the one matching the target, paste a prompt and replace <angle brackets>.
 
-> **Scope:** your own software or hardware, a CTF/crackme, a vendor-authorized bug bounty, or incident-response work you're permitted to do. This project's authorized-use policy (`DISCLAIMER.md`) applies to every pack below — lawful analysis and security education, never unauthorized access to someone else's running system or session.
+**Scope:** your own software or hardware, a CTF/crackme, a vendor-authorized bug bounty, or incident-response work you're permitted to do. This project's authorized-use policy (`DISCLAIMER.md`) applies to every pack below — lawful analysis and security education, never unauthorized access to someone else's running system or session.
 
 | Skill | Section | Prompts |
 |---|---|---|

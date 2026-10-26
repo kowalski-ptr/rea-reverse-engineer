@@ -7,6 +7,9 @@ description: REA prompt pack:  Feature tracing (any program) (3 ready-to-paste p
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`.
+
 ### Explain one feature
 
 ```text
