@@ -1,5 +1,8 @@
 # Case file — firmware & embedded
 
+> **Scope:** your own hardware, or a target you're otherwise authorized to
+> study — see [DISCLAIMER.md](../../../../DISCLAIMER.md).
+
 Firmware-image triage, MCU/IoT blobs, and the protocols embedded devices
 speak. `inspect_firmware_regions` and `extract_firmware` do the heavy
 lifting on Linux with caller-supplied Binwalk/Unblob — see the

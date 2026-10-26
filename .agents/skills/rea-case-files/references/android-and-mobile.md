@@ -1,5 +1,8 @@
 # Case file — Android & mobile
 
+> **Scope:** your own software, a CTF/crackme, or a target you're otherwise
+> authorized to study — see [DISCLAIMER.md](../../../../DISCLAIMER.md).
+
 APK structure, Java/Kotlin↔native boundaries, storage/crypto review, and
 packed-app triage. `inspect_android_package` is the entry point for code and
 references; `inspect_apk_signature` handles signing identity separately —

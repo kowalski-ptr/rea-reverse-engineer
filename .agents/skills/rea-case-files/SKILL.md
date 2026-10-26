@@ -1,9 +1,17 @@
 ---
 name: rea-case-files
-description: Ready-to-paste REA investigation templates, organized by target domain (native binaries, web/Electron, Android, games, firmware, kernel/drivers, vulnerability review, malware, anti-cheat/protector research, cloning). Use when a user wants to point REA at a reverse-engineering task and needs a concrete, evidence-first prompt rather than a vague request. Install the `reverse-engineer-anything` skill separately for the actual tool contracts this library points at.
+description: Ready-to-paste REA investigation templates for learning how real software is built, so you can design and build your own for private use — organized by target domain (native binaries, web/Electron, Android, games, firmware, kernel/drivers, cloning). Also includes a security-education set (vulnerability review, incident-response triage, software-protection assessment) scoped to your own software, CTFs, bug bounties, and authorized research — see DISCLAIMER.md. Use when a user wants to point REA at a reverse-engineering task and needs a concrete, evidence-first prompt rather than a vague request. Install the `reverse-engineer-anything` skill separately for the actual tool contracts this library points at.
 ---
 
 # REA case files
+
+**What this is for:** learning how existing software actually works — its
+algorithms, protocols, data formats, and architecture — so you can study the
+best patterns you find and build your own software from that understanding.
+That's the same method students, security engineers, and curious developers
+have always used to learn: read how something good was built, then build
+your own. Every template below produces *your own* documented understanding,
+never someone else's code or assets.
 
 A blank "reverse-engineer this for me" produces a blank answer. This library
 is the fix: one opening ritual, then a case file per target domain, each
@@ -16,6 +24,18 @@ replacement. It assumes that skill (and REA itself) is installed and
 answers "what should I ask for", not "how does the tool work" — for tool
 contracts, provider setup, and recovery, defer to that skill and its
 references.
+
+## Scope, up front
+
+> **Scope:** your own software or hardware, a CTF/crackme, a vendor-authorized
+> bug bounty, or incident-response work you're permitted to do. This
+> project's authorized-use policy ([DISCLAIMER.md](../../../DISCLAIMER.md))
+> applies to everything below — lawful analysis, security education, and
+> interoperability, never unauthorized access to someone else's running
+> system, account, or session.
+
+Every case file repeats this scope in its own opening line, because it's the
+precondition for everything in it, not an afterthought.
 
 ## Open every case the same way
 
@@ -84,37 +104,38 @@ behavior changes.
    a risk-ranked report — naming the artifact forces the agent to verify its
    own claims instead of just describing them.
 6. **Name the scope, every time.** "My own lab machine," "offline
-   single-player," "document, don't bypass" — stating it keeps the
-   investigation usable for research and reporting instead of drifting into
-   something nobody actually asked for.
+   single-player," "a documented assessment of my own product" — stating it
+   keeps the investigation usable for learning and reporting instead of
+   drifting into something nobody actually asked for.
 
 ## Case files
 
 Open the one that matches the target — each is short enough to read in
-full, and links back to `reverse-engineer-anything`'s own references where
-the real tool contracts live.
+full, opens with the same scope statement, and links back to
+`reverse-engineer-anything`'s own references where the real tool contracts
+live.
 
-| Target                                                             | Case file                                                                                         |
-| -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Native executables, libraries; deobfuscation; Go/Rust recovery      | [references/native-binaries-and-deobfuscation.md](references/native-binaries-and-deobfuscation.md) |
-| Web apps, Electron, browser extensions, bundled/minified JS          | [references/web-electron-and-browser.md](references/web-electron-and-browser.md)                   |
-| Android APKs, Java/Kotlin + native/JNI boundaries                    | [references/android-and-mobile.md](references/android-and-mobile.md)                               |
-| Games: gameplay logic, engines, asset pipelines, WASM portability     | [references/games-and-portability.md](references/games-and-portability.md)                         |
-| Firmware images, MCU/IoT blobs, embedded protocols                   | [references/firmware-and-embedded.md](references/firmware-and-embedded.md)                         |
-| Kernel modules, drivers, syscalls — analysis through exploit research | [references/kernel-and-drivers.md](references/kernel-and-drivers.md)                               |
-| Trust boundaries, sinks, patch diffing, crash-to-root-cause           | [references/vulnerability-and-security-review.md](references/vulnerability-and-security-review.md) |
-| Malware: triage, C2, persistence/evasion, family correlation          | [references/malware-analysis.md](references/malware-analysis.md)                                   |
-| Anti-cheat, DMA/hardware cheats, protectors, licensing/cracking research | [references/protection-anti-cheat-and-hardening.md](references/protection-anti-cheat-and-hardening.md) |
-| Clean-room cloning, protocol/ABI recovery, behavioral equivalence     | [references/cloning-and-reconstruction.md](references/cloning-and-reconstruction.md)                |
+| Target                                                                | Case file                                                                                             |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| Native executables, libraries; deobfuscation; Go/Rust recovery           | [references/native-binaries-and-deobfuscation.md](references/native-binaries-and-deobfuscation.md)       |
+| Web apps, Electron, browser extensions, bundled/minified JS              | [references/web-electron-and-browser.md](references/web-electron-and-browser.md)                           |
+| Android APKs, Java/Kotlin + native/JNI boundaries                        | [references/android-and-mobile.md](references/android-and-mobile.md)                                     |
+| Games: gameplay logic, engines, asset pipelines, WASM portability         | [references/games-and-portability.md](references/games-and-portability.md)                               |
+| Firmware images, MCU/IoT blobs, embedded protocols                       | [references/firmware-and-embedded.md](references/firmware-and-embedded.md)                               |
+| Kernel modules, drivers, syscalls — reachability and hardening review     | [references/kernel-and-drivers.md](references/kernel-and-drivers.md)                                     |
+| Trust boundaries, sinks, patch diffing, crash-to-root-cause               | [references/vulnerability-and-security-review.md](references/vulnerability-and-security-review.md)       |
+| Incident-response sample triage: static capability mapping, config/IOC extraction | [references/incident-response-sample-triage.md](references/incident-response-sample-triage.md)    |
+| Software-protection assessment: license checks, anti-tamper, hardware countermeasures | [references/software-protection-assessment.md](references/software-protection-assessment.md)    |
+| Clean-room cloning, protocol/ABI recovery, behavioral equivalence         | [references/cloning-and-reconstruction.md](references/cloning-and-reconstruction.md)                       |
 
 ## Scope, stated plainly
 
 Only point any of these templates at software you own or are explicitly
 authorized to test — your own builds, a lab machine, a CTF or crackme, a
 vendor bug bounty, or a sample handed to you for incident response. The
-kernel, anti-cheat, DMA, protector, and cracking case files are written for
-security research, interoperability, and hardening your own product; they
-ask the agent to *document and characterize*, not to weaponize a bypass for
-someone else's software or to touch another player's live session. When a
-template doesn't fit your authorization, don't paste it — describe the
-actual boundary to the agent instead.
+kernel, software-protection, and incident-response case files exist for
+security education, interoperability, and hardening your own product: they
+ask the agent to produce a *documented assessment*, not to weaponize
+anything against someone else's software or touch another player's live
+session. When a template doesn't fit your authorization, don't paste it —
+describe the actual boundary to the agent instead.

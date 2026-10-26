@@ -1,14 +1,21 @@
 # Case file — kernel & drivers
 
+> **Scope:** your own software or hardware, a CTF/crackme, a vendor-authorized
+> bug bounty, or incident-response work you're permitted to do. This
+> project's authorized-use policy ([DISCLAIMER.md](../../../../DISCLAIMER.md))
+> applies to everything below. Never against a system, account, or session
+> you don't own or weren't given explicit permission to test.
+
 From a first static read of a driver to validating whether a CVE's fix
-actually closes every path. "Exploitation research" here means proving
-reachability and documenting the primitive — not building a public
-weaponized exploit. Scope every template below to a driver you own or are
-explicitly authorized to assess: your own vulnerable driver, a CVE you're
-validating for a bug bounty, a CTF kernel challenge, or a hardening review.
-Static analysis only unless stated otherwise — none of these load the
-driver. `inspect_kernel_module` reads Linux `.ko` metadata without a kernel
-or `modinfo`; see the
+actually closes every path. This is reachability analysis: proving a
+mechanism exists and writing down exactly how it works, for a driver's own
+author, a bug-bounty program, or a CTF challenge — not building anything to
+run against a system you don't control. Scope every template below to a
+driver you own or are explicitly authorized to assess: your own driver
+under review, a CVE you're validating for a bug bounty, a CTF kernel
+challenge, or a hardening review. Static analysis only unless stated
+otherwise — none of these load the driver. `inspect_kernel_module` reads
+Linux `.ko` metadata without a kernel or `modinfo`; see the
 [kernel module guide](https://github.com/morluto/rea/blob/main/docs/kernel-modules.md).
 
 ### Driver inspection (Windows `.sys` / Linux `.ko`)
@@ -59,9 +66,9 @@ Check whether the fix for <CVE-ID> is complete in <kernel binary/module
 version X>. Locate the patched function, verify the added check covers
 every caller path that reaches it, then search the rest of the binary for
 the same unchecked pattern elsewhere (same struct, different entry point).
-Report fix present/absent, any bypass path found, and any sibling location
-still missing the check — each explicitly labeled hypothesis or confirmed,
-with addresses.
+Report fix present/absent, any uncovered path found, and any sibling
+location still missing the check — each explicitly labeled hypothesis or
+confirmed, with addresses.
 ```
 
 ### Race condition / TOCTOU hunt

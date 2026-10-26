@@ -1,5 +1,8 @@
 # Case file — web, Electron & browser targets
 
+> **Scope:** your own software, a CTF/crackme, or a target you're otherwise
+> authorized to study — see [DISCLAIMER.md](../../../../DISCLAIMER.md).
+
 For ASARs, extracted JavaScript, live sites, and browser extensions. Static
 work routes through `analyze_javascript_application`; anything that needs
 the real page or app running goes through the browser/Electron workflows in

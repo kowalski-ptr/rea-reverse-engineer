@@ -1,8 +1,15 @@
 # Case file — cloning & reconstruction
 
-Clean-room methodology, start to finish: extract *behavior and interfaces*
-from a target, never its code, assets, branding, or licensing mechanism.
-Use this for interoperability work, feature parity, and research — and
+> **Scope:** your own software, a CTF/crackme, or a target you're otherwise
+> authorized to study — see [DISCLAIMER.md](../../../../DISCLAIMER.md).
+
+This is the flagship pattern for learning by building: study how a piece of
+software works, write down what you learned as a specification, then build
+your own implementation from that specification — for your own private use,
+for interoperability, or simply to learn. Clean-room methodology, start to
+finish: extract *behavior and interfaces* from a target, never its code,
+assets, branding, or licensing mechanism. Use this for interoperability
+work, feature parity, and research — and
 pair the "validate" template with `verify_reconstruction` whenever it's
 available, so equivalence is demonstrated rather than assumed.
 

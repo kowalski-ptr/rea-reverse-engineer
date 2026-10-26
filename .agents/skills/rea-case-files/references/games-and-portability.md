@@ -1,5 +1,8 @@
 # Case file — games & portability
 
+> **Scope:** your own software, a CTF/crackme, or a target you're otherwise
+> authorized to study — see [DISCLAIMER.md](../../../../DISCLAIMER.md).
+
 Gameplay logic, engine/asset pipelines, and porting a native game toward
 WASM. These build on the native-binary workflow — see
 [native-binaries-and-deobfuscation.md](native-binaries-and-deobfuscation.md) —

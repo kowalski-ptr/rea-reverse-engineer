@@ -1,5 +1,10 @@
 # Case file — native binaries & deobfuscation
 
+> **Scope:** your own software, a CTF/crackme, or a target you're otherwise
+> authorized to study — see [DISCLAIMER.md](../../../../DISCLAIMER.md). The
+> goal throughout is to learn how a real, shipped binary is actually built,
+> so you can apply the same patterns in your own software.
+
 From a first look at an unfamiliar executable through control-flow
 flattening, struct recovery, and reconciling two builds of the same
 program. REA opens the target with `open_binary`, decompiles through
