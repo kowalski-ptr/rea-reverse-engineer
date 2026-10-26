@@ -121,7 +121,7 @@ corresponding objects.
 | Unique WebMCP name, owner origin, and frame URL                               | Tool correspondence without transient frame IDs | Correspondence between duplicate owners       |
 | A complete source digest or decoded storage value                             | Comparable content                              | Missing source bytes or opaque remote objects |
 
-Complete traversal or inventory does not make unavailable values equal. A
+**Complete traversal or inventory does not make unavailable values equal.** A
 partial aggregate fingerprint difference cannot establish modification when
 omissions alone explain it; independently proven differences still survive.
 
