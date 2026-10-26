@@ -111,6 +111,15 @@ similar feature for my project.
 
 Replace Notes with your target app and the feature you want to understand.
 
+### Need a sharper prompt?
+
+The [`rea-case-files`](.agents/skills/rea-case-files/SKILL.md) skill is a
+companion prompt library: ready-to-paste, evidence-first templates organized
+by target — native binaries, web/Electron, Android, games, firmware,
+kernel/drivers, vulnerability review, malware, anti-cheat/protector
+research, and clean-room cloning. Install it alongside the main skill when
+your agent supports loading skills from this repository.
+
 ### Use the terminal
 
 Inspect an extracted JavaScript/Electron app directory or ASAR:
