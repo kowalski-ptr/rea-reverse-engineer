@@ -60,6 +60,8 @@ The dry-run option reports the chosen merge base, scope and build prerequisite
 without executing tests or building. A missing Git base reports how to fetch
 it or select another revision.
 
+### Type checking and builds
+
 Source typechecking needs no compiled runtime or generated test metadata.
 Typecheck, runtime compilation, and Frida binding verification share
 `scripts/run-typescript.mjs`. The pinned tsrs package supplies Linux x64/arm64
@@ -122,6 +124,8 @@ An empty changed selection means no tests were selected, not verified
 correctness. Select relevant boundary files and real-provider lanes explicitly.
 Source projects also contain large capacity regressions; `test:fast` promises
 no compiled-runtime prerequisite, not a fixed time budget.
+
+### Static checks and lint rules
 
 `npm run lint` prints errors and a warning summary; `npm run jscpd` prints
 duplication statistics. Complete reports remain in `.cache/static-checks/`.
@@ -213,6 +217,8 @@ broad changes or diagnosing CI, rather than after every edit. Package/install
 changes additionally need package verification; provider changes need actual
 provider evidence.
 
+### Test architecture and Vitest projects
+
 Vitest projects use up to two workers, bounded by host parallelism.
 `process-boundary` runs later with serial files because process-tree sampling
 shares host resources. Acceptance and process-global cases use isolated forks
@@ -293,6 +299,8 @@ state. A previous test pass therefore cannot replace current validation, even
 when the source tree is unchanged. `check:pr` also runs the fast Python producer
 suite; CI runs it in the static job for code changes. These producer tests do not
 establish real LLDB engine coverage.
+
+### Shared CLI/MCP session reuse
 
 Vitest's persistent compile cache remains disabled. The `cliTest` fixture shares
 a temporary Node compile cache among its fresh CLI subprocesses. The worker
