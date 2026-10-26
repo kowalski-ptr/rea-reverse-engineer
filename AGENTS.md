@@ -12,6 +12,21 @@ Configuration changes must be additive and idempotent, with backups. Installers 
 
 Preserve caller-selected inputs and local evidence, including output, URLs, paths, digests, and metadata. Redact transport authentication credentials and explicitly marked sensitive values; do not infer secrecy from names or text patterns. Do not persist the ambient environment merely because a child inherits it.
 
+## Skills map
+
+Agent-facing instructions live under `.agents/skills/`, one directory per skill, discovered by directory name. Load the narrowest one that matches the task instead of re-deriving its guidance from this file:
+
+| Skill | Load it for |
+| --- | --- |
+| [`reverse-engineer-anything`](.agents/skills/reverse-engineer-anything/SKILL.md) | Running an actual REA investigation: connecting, routing a target to its tool, paging Evidence, planning a multi-feature pass. |
+| [`rea-case-files`](.agents/skills/rea-case-files/SKILL.md) | Turning a vague "reverse-engineer this" into a sharp, evidence-first prompt — ready-to-paste templates by target domain. |
+| [`rea-contract-design`](.agents/skills/rea-contract-design/SKILL.md) | Designing or changing a tool contract, CLI/MCP shape, or Evidence semantics. |
+| [`rea-investigation-efficiency`](.agents/skills/rea-investigation-efficiency/SKILL.md) | Finding and fixing a measured bottleneck in a provider or shared analysis workflow. |
+| [`rea-suite-integrity`](.agents/skills/rea-suite-integrity/SKILL.md) | Auditing whether CI/test suites still catch real regressions, or cutting their cost without losing that protection. |
+| [`rea-release-chronicle`](.agents/skills/rea-release-chronicle/SKILL.md) | Preparing a changelog or GitHub release with verified contributor credit. |
+
+The last four are contributor-facing and apply to this repository's own development; the first two are what REA ships to an analyst's agent.
+
 ## Architecture and Cleanup
 
 Dependencies flow inward: domain semantics and contracts, provider adapters, shared application workflows, then CLI/MCP adapters. Keep engine protocols and provider-specific code out of domain/application layers. See [docs/architecture.mermaid](docs/architecture.mermaid) when changing composition.
