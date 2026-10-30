@@ -193,6 +193,8 @@ export const skillDestinationSelection = (
   clientIds: readonly string[] | undefined,
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): {
   readonly destinations: readonly SkillDestination[];
   readonly issues: readonly SkillPathIssue[];
@@ -202,6 +204,7 @@ export const skillDestinationSelection = (
     clientIds,
     environment,
     platform,
+    skillRoot,
   );
   return {
     destinations: selection.directories.map(({ client, directory }) => ({
@@ -223,12 +226,15 @@ export const skillDestinations = (
   clientIds: readonly string[] | undefined,
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): readonly SkillDestination[] => {
   const selection = skillDestinationSelection(
     home,
     clientIds,
     environment,
     platform,
+    skillRoot,
   );
   if (selection.issues.length > 0)
     throw skillDirectoryFailure(selection.issues);
@@ -241,6 +247,8 @@ export const existingSkillDestinations = async (
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
   resources?: ArtifactResourceScope,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<{
   readonly destinations: readonly SkillDestination[];
   readonly issues: readonly SkillPathIssue[];
@@ -250,6 +258,7 @@ export const existingSkillDestinations = async (
     undefined,
     environment,
     platform,
+    skillRoot,
   );
   const issues: SkillPathIssue[] = [...selection.issues];
   const existing: SkillDestination[] = [];
@@ -362,12 +371,15 @@ export const validateCanonicalSkillDirectories = async (
   clientIds: readonly string[],
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<Result<void, SetupSkillInstallError>> => {
   const selection = skillDestinationSelection(
     home,
     clientIds,
     environment,
     platform,
+    skillRoot,
   );
   const issues = [
     ...selection.issues,
@@ -384,18 +396,22 @@ const canonicalSkillFiles = async (
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
   resources?: ArtifactResourceScope,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<readonly CanonicalSkillFile[]> => {
   const destinations = skillDestinations(
     home,
     clientIds,
     environment,
     platform,
+    skillRoot,
   );
   const admission = await validateCanonicalSkillDirectories(
     home,
     clientIds,
     environment,
     platform,
+    skillRoot,
   );
   if (!admission.ok) throw admission.error;
   return Promise.all(
@@ -431,12 +447,15 @@ const inspectCanonicalSkill = async (
   environment: Readonly<NodeJS.ProcessEnv>,
   platform: NodeJS.Platform,
   resources?: ArtifactResourceScope,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<Result<CanonicalSkillInspection, SkillInspectionFailure>> => {
   const selection = skillDestinationSelection(
     home,
     clientIds,
     environment,
     platform,
+    skillRoot,
   );
   const destinations = selection.destinations;
   const issues: SkillPathIssue[] = [...selection.issues];
@@ -518,6 +537,8 @@ export const canonicalSkillNeedsInstall = async (
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
   resources?: ArtifactResourceScope,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<boolean> => {
   try {
     const inspection = await inspectCanonicalSkill(
@@ -526,6 +547,7 @@ export const canonicalSkillNeedsInstall = async (
       environment,
       platform,
       resources,
+      skillRoot,
     );
     return !inspection.ok || !inspection.value.canonical;
   } catch (cause: unknown) {
@@ -579,6 +601,8 @@ export const installCanonicalSkill = async (
   platform: NodeJS.Platform = process.platform,
   operations: SkillInstallFileOperations = systemSkillInstallFileOperations,
   resources?: ArtifactResourceScope,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<SkillInstallResult> => {
   const publications: SkillFilePublication[] = [];
   const preparedCleanupOwners: SkillPublicationCleanupOwner[] = [];
@@ -593,6 +617,7 @@ export const installCanonicalSkill = async (
       environment,
       platform,
       resources,
+      skillRoot,
     );
     const changed = canonical.filter(
       ({ content, original }) =>
@@ -689,6 +714,8 @@ export const readInstalledSkillIdentity = async (
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
   resources?: ArtifactResourceScope,
+  /** Caller-selected root for the unscoped "shared" destination only. */
+  skillRoot?: string,
 ): Promise<InstalledSkillIdentity | undefined> => {
   const inspection = await inspectCanonicalSkill(
     home,
@@ -696,6 +723,7 @@ export const readInstalledSkillIdentity = async (
     environment,
     platform,
     resources,
+    skillRoot,
   );
   if (inspection.ok && !inspection.value.installedDestination) return undefined;
   const content = inspection.ok

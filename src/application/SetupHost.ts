@@ -162,6 +162,8 @@ export const hostRemediation = (host: SetupHost): string | undefined =>
 export const systemSetupHost = (
   selectedDoctorHost: DoctorHost | undefined = undefined,
   environment: Readonly<NodeJS.ProcessEnv> = process.env,
+  /** Caller-selected root for the unscoped "shared" skill destination only. */
+  skillRoot?: string,
 ): SetupHost => {
   const doctorHost = selectedDoctorHost ?? systemDoctorHost({ environment });
   const platform = doctorHost.platform;
@@ -217,7 +219,13 @@ export const systemSetupHost = (
         }
       : {}),
     skillDestinations: (clientIds) =>
-      skillDestinations(homeDirectory, clientIds, environment, platform),
+      skillDestinations(
+        homeDirectory,
+        clientIds,
+        environment,
+        platform,
+        skillRoot,
+      ),
     ...registration,
     prewarmRegistrationRunner,
     nodeVersion: process.versions.node,
@@ -341,6 +349,7 @@ export const systemSetupHost = (
         environment,
         platform,
         resources,
+        skillRoot,
       ),
     validateSkillDirectories: (clientIds) =>
       validateCanonicalSkillDirectories(
@@ -348,6 +357,7 @@ export const systemSetupHost = (
         clientIds,
         environment,
         platform,
+        skillRoot,
       ),
     installSkill: (clientIds) =>
       installCanonicalSkill(
@@ -357,6 +367,7 @@ export const systemSetupHost = (
         platform,
         undefined,
         resources,
+        skillRoot,
       ),
     doctor: (scope) => runDoctor(undefined, doctorHost, scope),
   };
