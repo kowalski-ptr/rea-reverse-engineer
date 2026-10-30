@@ -7,8 +7,12 @@ description: REA prompt pack:  Software & feature cloning (4 ready-to-paste prom
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
-> Clean-room methodology: extract *behavior*, not code. Never copy
-> proprietary source, assets, branding or licensing mechanisms.
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`. This is the learn-by-building
+pattern: study how something works, write down what you learned as a spec,
+then build your own implementation from that spec, for your own private
+use. Clean-room methodology throughout: extract *behavior*, not code.
+Never copy proprietary source, assets, branding or licensing mechanisms.
 
 ### Full application clone (behavioral)
 

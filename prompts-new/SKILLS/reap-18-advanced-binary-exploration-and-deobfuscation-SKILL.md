@@ -7,6 +7,9 @@ description: REA prompt pack:  Advanced binary exploration & deobfuscation (8 re
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`.
+
 ### Control-flow flattening recovery
 
 ```text
@@ -49,8 +52,8 @@ VM-style handler (opcode dispatch loop, context structure, handler table).
 
 Map the handler table: opcode → handler address → operation class (load,
 store, arithmetic, branch, call). Estimate how many distinct opcodes exist and
-which original operations you can already recognize. Do not attempt to defeat
-the protection — I want the structure documented first.
+which original operations you can already recognize. The deliverable is the
+documented structure, not an attempt to defeat the protection.
 ```
 
 ### Mixed-mode binary: managed + native boundary

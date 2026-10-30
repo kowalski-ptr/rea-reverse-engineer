@@ -353,6 +353,34 @@ Check the separate profile with the prefixed `claude mcp list` above and compare
 with the default profile with `CLAUDE_CONFIG_DIR` unset. For local scope, run
 `claude mcp list` from the selected project and again from another project.
 
+**Scoping the skill itself to one project.** The local-scope MCP route above
+deliberately skips the bundled skill, so `rea doctor`/`rea update` keep working
+from the registration alone. To put the skill's own files inside one project
+directory instead of the caller's home directory, use `--skill-root` with
+`--skill-client shared`:
+
+```bash
+rea setup --skill-client shared --skill-root /path/to/project --yes
+```
+
+This writes `/path/to/project/.agents/skills/reverse-engineer-anything`
+instead of `~/.agents/skills/reverse-engineer-anything`, and touches nothing
+under the home directory. Every per-client skill destination (Claude Code's
+`~/.claude/skills`, Cursor's own path, and so on) is unaffected — `--skill-root`
+only redirects the unscoped `shared` destination. A client that reads a
+project-local `.agents/skills` directory on its own (the way this REA checkout's
+skill is discovered directly from its own repository, with no install step at
+all) then sees the skill only in that one project, not in every project the
+client opens.
+
+`rea doctor --skill --skill-root /path/to/project` checks that same location.
+`rea update` and `rea uninstall` do not accept `--skill-root` and so cannot
+see or manage a custom-rooted copy automatically — the same limitation the
+local-scope MCP registration above already has. Re-run the `setup` command
+with the same `--skill-root` to refresh it after an update, or delete the
+`.agents/skills/reverse-engineer-anything` directory under that root yourself
+to remove it.
+
 ## Check readiness for your task
 
 Run `rea doctor` when you need diagnosis. It reads host prerequisites and agent

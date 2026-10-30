@@ -1,0 +1,4 @@
+interface:
+  display_name: "REA investigation efficiency"
+  short_description: "Optimize analysis with preserved Evidence and measured costs"
+  default_prompt: "Use $rea-investigation-efficiency to find and verify a concrete analysis bottleneck while preserving correctness and Evidence."

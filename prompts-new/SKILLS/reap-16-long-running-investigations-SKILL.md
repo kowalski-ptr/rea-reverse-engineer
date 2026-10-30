@@ -7,6 +7,9 @@ description: REA prompt pack:  Long-running investigations (1 ready-to-paste pro
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`.
+
 ### Continue where you left off
 
 ```text

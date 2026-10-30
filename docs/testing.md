@@ -60,6 +60,8 @@ The dry-run option reports the chosen merge base, scope and build prerequisite
 without executing tests or building. A missing Git base reports how to fetch
 it or select another revision.
 
+### Type checking and builds
+
 Source typechecking needs no compiled runtime or generated test metadata.
 Typecheck, runtime compilation, and Frida binding verification share
 `scripts/run-typescript.mjs`. The pinned tsrs package supplies Linux x64/arm64
@@ -123,6 +125,8 @@ correctness. Select relevant boundary files and real-provider lanes explicitly.
 Source projects also contain large capacity regressions; `test:fast` promises
 no compiled-runtime prerequisite, not a fixed time budget.
 
+### Static checks and lint rules
+
 `npm run lint` prints errors and a warning summary; `npm run jscpd` prints
 duplication statistics. Complete reports remain in `.cache/static-checks/`.
 The fast gate uploads them as `static-check-reports`. Full qualification
@@ -147,31 +151,29 @@ rules. Passing them does not prove that two parsers agree, a wrapper is still
 needed at runtime, or cleanup has one owner.
 
 The lint gate treats `no-async-promise-executor`, `no-unreachable`, and
-`no-unsafe-optional-chaining` as errors. These catch lost async executor failures,
+`no-unsafe-optional-chaining` as errors, catching lost async executor failures,
 dead code, and unsafe uses of optional-chain results. `no-unsafe-finally` remains
 a warning because cleanup paths can deliberately throw aggregated failures;
-review whether they preserve the primary failure. Two local rules
-cover narrower observed failures: `rea/no-buffer-deep-equality` flags Vitest
-deep comparisons of Buffers from recognized constructors and file reads,
-including simple `const` aliases; `rea/cancellation-cause` requires an explicit
-cause when a directly checked caller `AbortSignal` is converted to an
-`AnalysisCancelledError`. The rules do not infer arbitrary Buffer types,
-follow indirect cancellation helpers, or prove that an explicit cause equals
-the caller's reason. Keep focused boundary and lifecycle tests for those facts.
+review whether they preserve the primary failure. Local rules cover narrower
+observed failures:
 
-`rea/no-evidence-json-preadmission` rejects direct generic JSON parses in
-`createEvidence` payload expressions; it does not analyze intermediate values.
-`rea/no-positional-tool-contract` rejects catalog indices used to select
-operation names, schemas or types; display-only selection remains allowed.
-`rea/no-fixture-root-cleanup` follows `const` fixture-root aliases into teardown
-deletion; mutable bindings and mixed root arrays remain outside its scope.
+| Rule | Catches | Limits |
+| --- | --- | --- |
+| `rea/no-buffer-deep-equality` | Flags Vitest deep comparisons of Buffers from recognized constructors and file reads, including simple `const` aliases | — |
+| `rea/cancellation-cause` | Requires an explicit cause when a directly checked caller `AbortSignal` is converted to an `AnalysisCancelledError` | — |
+| `rea/no-evidence-json-preadmission` | Rejects direct generic JSON parses in `createEvidence` payload expressions | Does not analyze intermediate values |
+| `rea/no-positional-tool-contract` | Rejects catalog indices used to select operation names, schemas or types | Display-only selection remains allowed |
+| `rea/no-fixture-root-cleanup` | Follows `const` fixture-root aliases into teardown deletion | Mutable bindings and mixed root arrays remain outside its scope |
+| `rea/no-shared-module-mock` | Resolves Vitest import bindings before rejecting module mocks in projects without per-file isolation. Aliases and namespace imports count | Comments, shadowed locals, ordinary methods and `spyOn` do not |
 
-`rea/no-shared-module-mock` resolves Vitest import bindings before rejecting
-module mocks in projects without per-file isolation. The test-project definitions
-own isolation for Vitest and lint; the executable gate checks the resolved policy
-and runs the same collector. Aliases and namespace imports count; comments,
-shadowed locals, ordinary methods and `spyOn` do not. Negative CLI probes use an
-external temporary project so concurrent repository checks cannot discover them.
+The rules do not infer arbitrary Buffer types, follow indirect cancellation
+helpers, or prove that an explicit cause equals the caller's reason. Keep
+focused boundary and lifecycle tests for those facts.
+
+The test-project definitions own isolation for Vitest and lint; the executable
+gate checks the resolved policy and runs the same collector. Negative CLI
+probes use an external temporary project so concurrent repository checks
+cannot discover them.
 
 Focused `.only` declarations, broken assertion promise chains, and unused disable
 directives are errors. `vitest/valid-expect` warns (`maxArgs: 2`) because valid stored and
@@ -184,13 +186,12 @@ advertised pattern.
 
 Fast lint stays syntax-based. `npm run lint:typed` runs serially with pinned
 `oxlint-tsgolint` 7.0.2005 and records native plus typed diagnostics in
-`.cache/static-checks/typed-oxlint.json`. Production `src` treats
-`no-misused-promises` as an error; tests/fixtures warn. `no-floating-promises` is
-an error throughout the lint inventory. `return-await` is an error in
-error-handling scopes so asynchronous completion stays inside its catch or
-cleanup boundary. Exhaustiveness is an error when a union member has neither a
-case nor a default. Intentional defaults count as handling the remaining union;
-new members covered by those defaults therefore require behavioral review.
+`.cache/static-checks/typed-oxlint.json`. It treats:
+
+- `no-misused-promises` as an error in production `src`; tests/fixtures warn;
+- `no-floating-promises` as an error throughout the lint inventory;
+- `return-await` as an error in error-handling scopes, so asynchronous completion stays inside its catch or cleanup boundary; and
+- exhaustiveness as an error when a union member has neither a case nor a default. Intentional defaults count as handling the remaining union; new members covered by those defaults therefore require behavioral review.
 
 Two HTTP/3 source-test files allow the runner-owned `node:test` registration API;
 ordinary unowned promises in those files still fail. The authored code-split
@@ -212,6 +213,8 @@ applicable; CI owns the full suite and coverage. Use the full local gate for
 broad changes or diagnosing CI, rather than after every edit. Package/install
 changes additionally need package verification; provider changes need actual
 provider evidence.
+
+### Test architecture and Vitest projects
 
 Vitest projects use up to two workers, bounded by host parallelism.
 `process-boundary` runs later with serial files because process-tree sampling
@@ -293,6 +296,8 @@ state. A previous test pass therefore cannot replace current validation, even
 when the source tree is unchanged. `check:pr` also runs the fast Python producer
 suite; CI runs it in the static job for code changes. These producer tests do not
 establish real LLDB engine coverage.
+
+### Shared CLI/MCP session reuse
 
 Vitest's persistent compile cache remains disabled. The `cliTest` fixture shares
 a temporary Node compile cache among its fresh CLI subprocesses. The worker
@@ -569,27 +574,35 @@ termination. Simulated Windows controls do not establish native Windows behavior
 Native process-ownership controls distinguish start identity, zombie lifecycle,
 current parent/group relation, and token-read evidence. Retain generation-bound
 candidates through smaller lineage observations, table omissions, reparenting,
-group changes, and failed cleanup retries. Identityless exit-refresh controls
-cover a replacement row that is not linked to the prior descendant set: a
-matching token on its own group is signaled, a foreign or absent token is not,
-an unreadable live token stays unresolved, a replacement that appears only in
-the confirmation table is still token-checked, a group discovered during
-revalidation is signaled before cleanup succeeds, a member that changes groups
-during confirmation is signaled in its new group, a PID first seen with a
-foreign token is read again on the confirmation table, a PID whose token was
-already read is read again even when its parent and group return to the
-pre-exit values, a pre-existing PID is read again when its parent or group
-changes, an unchanged pre-existing row that was never token-read stays unread,
-an unbounded confirmation
-chain stays unresolved, lineage reads a row again when its launcher-tree
-membership changes, a cached lineage token is read again on the next refresh, an initial descendant whose token already matched is read again on a later refresh, the launcher is read again on that refresh and a missing, unowned, or relation-changed launcher PID stays unavailable, a descendant absent from the latest refresh is omitted,
-a group that reappears after it was processed is revalidated once, a further
-reappearance stays unresolved, lineage publishes one row per PID, and lineage does not publish a
-verified empty descendant list while that row remains unexamined. A readable token with unavailable
-identity stays unresolved. Native UID facts, rather than an earlier process-table
-row, determine whether a token denial concerns another user. Darwin tests compile
-the helper and exercise snapshot growth, absence, lifecycle, and UID observations;
-controlled Linux procfs tests do not establish real Linux exit or PID-reuse behavior.
+group changes, and failed cleanup retries.
+
+Identityless exit-refresh controls cover a replacement row that is not linked
+to the prior descendant set:
+
+- a matching token on its own group is signaled; a foreign or absent token is not;
+- an unreadable live token stays unresolved;
+- a replacement that appears only in the confirmation table is still token-checked;
+- a group discovered during revalidation is signaled before cleanup succeeds;
+- a member that changes groups during confirmation is signaled in its new group;
+- a PID first seen with a foreign token is read again on the confirmation table;
+- a PID whose token was already read is read again even when its parent and group return to the pre-exit values;
+- a pre-existing PID is read again when its parent or group changes;
+- an unchanged pre-existing row that was never token-read stays unread;
+- an unbounded confirmation chain stays unresolved;
+- lineage reads a row again when its launcher-tree membership changes;
+- a cached lineage token is read again on the next refresh;
+- an initial descendant whose token already matched is read again on a later refresh;
+- the launcher is read again on that refresh, and a missing, unowned, or relation-changed launcher PID stays unavailable;
+- a descendant absent from the latest refresh is omitted;
+- a group that reappears after it was processed is revalidated once; a further reappearance stays unresolved;
+- lineage publishes one row per PID; and
+- lineage does not publish a verified empty descendant list while that row remains unexamined.
+
+A readable token with unavailable identity stays unresolved. Native UID facts,
+rather than an earlier process-table row, determine whether a token denial
+concerns another user. Darwin tests compile the helper and exercise snapshot
+growth, absence, lifecycle, and UID observations; controlled Linux procfs tests
+do not establish real Linux exit or PID-reuse behavior.
 
 For atomic writes, exercise cancellation on both sides of the documented commit
 point and preserve any publication receipt. A late interruption does not prove
@@ -607,27 +620,19 @@ shutdown event after a cleanup failure to verify that its listener can retry.
 Exercise non-default lifecycle deadlines through queued requests and their
 consumers; default-only controls cannot detect dropped request options.
 
-For descriptor-backed reads, inject a close failure after a successful read and
-after a primary read or cancellation failure. Verify that the exact descriptor
-remains owned, both failures survive, and a later close retries it. Repeat
-admission attempts while close still fails: no additional descriptor or
-native command should start. Restore close and verify that the exact owner
-resolves the originating cleanup marker and allows later work, while the earlier
-failure remains available as a diagnostic. Retain errors returned by multiple
-failed retries, including admission and shutdown aggregates, and assert that
-each becomes complete after recovery. For an aggregate with multiple owners,
-release one owner while another still fails and assert that it remains incomplete.
-Cover recovery before the
-caller-specific error is bound to its retained owner, as
-another request can retry cleanup concurrently. Confirm that an already released
-owner resolves a later binding too. Include
-admission failure after opening the descriptor. If caller cancellation returns
-before an inspection settles, gate its final read or close and verify that
-session shutdown waits for the owned work and reports any retained resources.
-Gate a later read in a multi-read inspection, not only its first read. Overlap
-operations so one retains a failed descriptor while another reaches its next
-read; both the operation and shutdown must settle without nested-admission
-deadlock. Deny child close and verify its containing root survives until retry.
+For descriptor-backed reads:
+
+- Inject a close failure after a successful read and after a primary read or cancellation failure. Verify that the exact descriptor remains owned, both failures survive, and a later close retries it.
+- Repeat admission attempts while close still fails: no additional descriptor or native command should start.
+- Restore close and verify that the exact owner resolves the originating cleanup marker and allows later work, while the earlier failure remains available as a diagnostic.
+- Retain errors returned by multiple failed retries, including admission and shutdown aggregates, and assert that each becomes complete after recovery.
+- For an aggregate with multiple owners, release one owner while another still fails and assert that it remains incomplete.
+- Cover recovery before the caller-specific error is bound to its retained owner, as another request can retry cleanup concurrently. Confirm that an already released owner resolves a later binding too.
+- Include admission failure after opening the descriptor.
+- If caller cancellation returns before an inspection settles, gate its final read or close and verify that session shutdown waits for the owned work and reports any retained resources.
+- Gate a later read in a multi-read inspection, not only its first read.
+- Overlap operations so one retains a failed descriptor while another reaches its next read; both the operation and shutdown must settle without nested-admission deadlock.
+- Deny child close and verify its containing root survives until retry.
 
 Exercise publication on filesystems without hard links using an unsupported-link
 seam. Check exclusive destination creation, stat/write/close failures, completed
@@ -649,12 +654,14 @@ subprocess-script consumers alongside TypeScript references. Source typecheck
 does not check those calls; run their orchestration tests against the built
 modules, including the verifier's failure and cleanup paths.
 
-Representative regressions include
-[process cleanup-time SIGINT](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/process/processCaptureCancellationAdapters.test.ts),
-[late authenticated cleanup](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/providers/hopper/hopperClient.handshakeRecovery.test.ts),
-[LLDB launch and finalization](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/providers/native/lldbCallTracerFailures.test.ts),
-[composed child ownership](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/src/application/binary/CompositeProvider.test.ts),
-and [public CLI cleanup denial](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/cli/wasmCleanupCli.test.ts).
+Representative regressions:
+
+- [process cleanup-time SIGINT](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/process/processCaptureCancellationAdapters.test.ts)
+- [late authenticated cleanup](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/providers/hopper/hopperClient.handshakeRecovery.test.ts)
+- [LLDB launch and finalization](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/providers/native/lldbCallTracerFailures.test.ts)
+- [composed child ownership](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/src/application/binary/CompositeProvider.test.ts)
+- [public CLI cleanup denial](https://github.com/morluto/rea/blob/e78455338fe2d06c4cd03d59cbf33473d754998b/tests/boundary/cli/wasmCleanupCli.test.ts)
+
 These controlled probes do not replace the matching real-provider lane. Record
 the base failure, passing control, exact host/provider, verified cleanup, and
 unavailable coverage; a missing engine is not a pass.
@@ -970,6 +977,8 @@ and workspace rather than reporting successful removal. The controlled
 public registry, and checks both the primary failure and live descendant absence.
 
 ## Real-toolchain verification lanes
+
+### Rizin debugger ownership
 
 Linux Rizin debugger ownership changes require a separate real-provider gate on
 Rizin 0.7.4. Run
@@ -1347,12 +1356,11 @@ use `--second-procedure rea_fixture_subtract --second-marker='- 13'`.
 The lane invokes the production CLI dispatcher and connects the pinned MCP
 client SDK to the production REA server. It verifies function Evidence and
 CLI/MCP parity, inventory/search, pseudocode, instructions, xrefs, malformed
-input, original-input preservation, and lifecycle cleanup. The headless
-profile also checks containing procedures, the admitted program as the
-document, address context, and feature tracing. For headless
-analysis it confirms that the owned database IDs disappear from upstream
-discovery and private workspaces are removed. For attached analysis it confirms
-the existing GUI target remains reachable with the same input identity.
+input, original-input preservation, and lifecycle cleanup.
+
+- Headless profile: also checks containing procedures, the admitted program as the document, address context, and feature tracing; confirms that the owned database IDs disappear from upstream discovery and private workspaces are removed.
+- Attached profile: confirms the existing GUI target remains reachable with the same input identity.
+
 `--package-root` selects an installed/extracted REA artifact. `--report` writes
 private local observations with mode `0600`; the console summary contains no
 target paths or upstream output.
@@ -1380,15 +1388,20 @@ The initial Linux x64 IDA Free 9.4 run used native MCP 1.1.2 with a local naviga
 
 `npm run verify:kuna` requires a caller-supplied `kuna` in `REA_KUNA_COMMAND`
 and a host C compiler (`REA_CC`, default `cc`) with `strip` and `nm`. It builds a
-source-owned fixture with non-inlined calls, with symbols and stripped, then verifies through MCP that
-callers, callees and exact incoming xrefs agree with those calls, graph/path
-composition reaches the callee, reference-only queries leave project/staging
-entries unchanged, repeated relationships reuse the graph, and
-the first cold pseudocode answer comes from a single-function run or an export
-that already finished, assembly waits for and serves from that export, and
-pseudocode and both dossier facets match their recorded file spans and digests,
-a fresh server reuses the export without rebuilding it, staging is empty after
-a completed export, and no owned process survives. Pass
+source-owned fixture with non-inlined calls, with symbols and stripped, then
+verifies through MCP that:
+
+- callers, callees and exact incoming xrefs agree with those calls;
+- graph/path composition reaches the callee;
+- reference-only queries leave project/staging entries unchanged;
+- repeated relationships reuse the graph;
+- the first cold pseudocode answer comes from a single-function run or an export that already finished, and assembly waits for and serves from that export;
+- pseudocode and both dossier facets match their recorded file spans and digests;
+- a fresh server reuses the export without rebuilding it;
+- staging is empty after a completed export; and
+- no owned process survives.
+
+Pass
 `--targets DIR --functions a,b` to add caller-built binaries laid out as
 `DIR/<flavor>/<name>` beside `<name>.stripped`; addresses come from the
 symbol-bearing build. `--compare-ghidra` with `GHIDRA_INSTALL_DIR` runs those
@@ -2099,16 +2112,15 @@ The verifier writes the Grafana-shaped HAR the view tests own, packs the
 checkout with `npm pack`, builds the bundle from the HAR with
 `rea environment-build --package-tarball` through the built CLI, the command
 users run, so the image installs this checkout rather than the registry
-package, and runs `agent-env run` on the bundle. It checks that the build
-reports the 28-record capture, the default template rules, the planned file set
-with the shipped manifest naming the reported capture, a coverage summary whose
-read and served write tools add up to the served tool count, and a bundle
-served from the derived state, which serves fewer tools than the
-manifest because write tools the capture did not confirm are not served, that the runner exits `0` with
-`tasks/smoke.json` reported as passed and the verifier's description naming
-that served tool count, and that no container exists
-after the run that did not exist before; the container inventory runs even when
-the run fails or times out, so a failed receipt still lists what it left. The one exception is the framework's
+package, and runs `agent-env run` on the bundle. It checks that:
+
+- the build reports the 28-record capture, the default template rules, and the planned file set with the shipped manifest naming the reported capture;
+- a coverage summary whose read and served write tools add up to the served tool count;
+- a bundle served from the derived state, which serves fewer tools than the manifest because write tools the capture did not confirm are not served;
+- the runner exits `0` with `tasks/smoke.json` reported as passed and the verifier's description naming that served tool count; and
+- no container exists after the run that did not exist before — the container inventory runs even when the run fails or times out, so a failed receipt still lists what it left.
+
+The one exception is the framework's
 own image-store helper, `agentenv-registry` (or `agentenv-registry-<port>`),
 a `registry:2` container the local provider starts on first use and keeps
 running across runs; a first run on a fresh host creates it, so the receipt

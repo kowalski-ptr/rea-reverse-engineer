@@ -7,12 +7,13 @@ description: REA prompt pack:  Go & Rust binary source recovery (7 ready-to-past
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
-> Go and Rust ship rich metadata in their binaries (Go: pclntab, moduledata,
-> full type/goroutine runtime; Rust: panic strings, `core::` symbols, crate
-> names, monomorphized function names). Recovery here means reconstructing
-> *structure and logic* — readable pseudocode, package/module layout, type
-> definitions — not literally the original `.go`/`.rs` files. Say so honestly
-> in the report. Scope: binaries you own or are authorized to analyze.
+Scope: binaries you own or are otherwise authorized to analyze — see
+`DISCLAIMER.md`. Go and Rust ship rich metadata in their binaries (Go:
+pclntab, moduledata, full type/goroutine runtime; Rust: panic strings,
+`core::` symbols, crate names, monomorphized function names). Recovery
+here means reconstructing *structure and logic* — readable pseudocode,
+package/module layout, type definitions — not literally the original
+`.go`/`.rs` files. Say so honestly in the report.
 
 ### Go binary: symbol & package map
 

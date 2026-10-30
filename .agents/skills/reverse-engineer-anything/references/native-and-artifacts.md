@@ -1,5 +1,43 @@
 # Native, managed, and packaged artifacts
 
+One section per format/tool — jump straight to the one your target needs
+instead of reading top to bottom:
+
+[Matching functions across releases](#matching-functions-across-releases) ·
+[Apple app resources](#apple-app-resources) ·
+[Desktop installation directories](#desktop-installation-directories) ·
+[Go build metadata](#go-build-metadata) ·
+[Model files](#model-files) ·
+[IL2CPP metadata](#il2cpp-metadata) ·
+[Rust dependency metadata](#rust-dependency-metadata) ·
+[PE Authenticode certificate tables](#pe-authenticode-certificate-tables) ·
+[PE import and delay-load tables](#pe-import-and-delay-load-tables) ·
+[PE TLS callbacks and load configuration](#pe-tls-callbacks-and-load-configuration) ·
+[ELF note tables](#elf-note-tables) ·
+[Apple IPS crash reports](#apple-ips-crash-reports) ·
+[Linux kernel modules](#linux-kernel-modules) ·
+[CPython pyc files](#cpython-pyc-files) ·
+[Erlang BEAM files](#erlang-beam-files) ·
+[SQLite snapshots](#sqlite-snapshots) ·
+[Recorded Linux crashes](#recorded-linux-crashes) ·
+[Offline ELF layout](#offline-elf-layout) ·
+[Offline WASM](#offline-wasm) ·
+[Offline APK signatures](#offline-apk-signatures) ·
+[Native targets](#native-targets) ·
+[Reuse caller-selected Ghidra analysis](#reuse-caller-selected-ghidra-analysis) ·
+[Ghidra startup deadline recovery](#ghidra-startup-deadline-recovery) ·
+[Bridge request ceiling](#bridge-request-ceiling) ·
+[Selected native facts and call graphs](#selected-native-facts-and-call-graphs) ·
+[Static memory and original file bytes](#static-memory-and-original-file-bytes) ·
+[DOS MZ with Ghidra](#dos-mz-with-ghidra) ·
+[Managed PE/CLI](#managed-pecli) (incl. [.NET NativeAOT](#net-nativeaot)) ·
+[Packages and extraction](#packages-and-extraction) (incl. [function annotations in Ghidra](#function-annotations-in-ghidra)) ·
+[Offline PE resource inventory](#offline-pe-resource-inventory) ·
+[Offline PE and ELF export tables](#offline-pe-and-elf-export-tables) ·
+[Godot PCK](#godot-pck)
+
+## Matching functions across releases
+
 For release comparisons, export `list_procedures` Evidence from each target before
 closing it. Close clears session records: import both bundles after collecting the
 two targets, or supply portable inline Evidence. `match_native_functions` pairs unique exact names and, when supplied,

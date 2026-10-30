@@ -25,6 +25,8 @@ import {
 export const createSystemDoctorHost = (
   environment: Readonly<NodeJS.ProcessEnv> = process.env,
   signal?: AbortSignal,
+  /** Caller-selected root for the unscoped "shared" skill destination only. */
+  skillRoot?: string,
 ): DoctorHost => {
   const registrationReads = new WeakMap<
     RetainedResourceScope,
@@ -60,6 +62,7 @@ export const createSystemDoctorHost = (
   return systemDoctorHost({
     environment,
     ...(signal === undefined ? {} : { signal }),
+    ...(skillRoot === undefined ? {} : { skillRoot }),
     providerRegistrationEnvironment: () => selectedJebRegistrationEnvironment,
     resolveProviderRequestBudget: async (
       analysisProvider,

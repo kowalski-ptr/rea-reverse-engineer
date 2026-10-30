@@ -7,7 +7,12 @@
 
 ### One MCP for reverse engineering across binaries, applications, and runtime behavior.
 
-**See a feature you like. Understand how it works, down to the binary level.**
+**See a feature you like. Understand how it works, down to the binary
+level — then build your own software from what you learned.** REA is a
+learning and security-education tool: it helps you study how real,
+shipped software is built, so you can design and build your own for
+private use, harden your own products, or do authorized security research.
+See `DISCLAIMER.md` for the full authorized-use policy.
 
 [![npm version](https://img.shields.io/npm/v/rea-agents?style=flat-square&color=cb3837)](https://www.npmjs.com/package/rea-agents)
 [![MCP tool catalog](https://img.shields.io/badge/MCP-tool_catalog-5c4ee5?style=flat-square)](docs/mcp-contracts.md#generated-catalog)
@@ -110,6 +115,15 @@ similar feature for my project.
 ```
 
 Replace Notes with your target app and the feature you want to understand.
+
+### Need a sharper prompt?
+
+The `rea-case-files` skill (`.agents/skills/rea-case-files/`) is a
+companion prompt library: ready-to-paste, evidence-first templates organized
+by target — native binaries, web/Electron, Android, games, firmware,
+kernel/drivers, vulnerability review, malware, anti-cheat/protector
+research, and clean-room cloning. Install it alongside the main skill when
+your agent supports loading skills from this repository.
 
 ### Use the terminal
 

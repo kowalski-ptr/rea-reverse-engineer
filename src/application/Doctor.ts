@@ -536,6 +536,8 @@ export interface SystemDoctorHostOptions {
     resourceScope: RetainedResourceScope,
     signal: AbortSignal,
   ) => Promise<DoctorCheck>;
+  /** Caller-selected root for the unscoped "shared" skill destination only. */
+  readonly skillRoot?: string;
 }
 
 /** Create diagnostics backed by the current process and host commands. */
@@ -771,6 +773,7 @@ export const systemDoctorHost = (
         environment,
         platform,
         resources,
+        options.skillRoot,
       ),
     close: async () => {
       controller.abort(STARTUP_OWNER_CLOSED);

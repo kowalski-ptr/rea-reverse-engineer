@@ -605,7 +605,7 @@ describe("canonical skill transaction", () => {
       );
     }
     expect(installedSkill).toContain(
-      "use normal repository tools and do not run REA",
+      "skip REA entirely: use your normal repository tools",
     );
     expect(installedSkill).toContain(
       `tool_count: ${String(TOOL_CONTRACTS.length)}`,
@@ -742,4 +742,81 @@ it("reads installed frontmatter metadata without treating body examples as ident
   expect(await readInstalledSkillIdentity(home, ["claude_code"])).toMatchObject(
     { version: null, toolCount: null, canonical: false },
   );
+});
+
+describe("skill root override", () => {
+  it("scopes only the shared destination to the selected root", async () => {
+    const home = await createTestTempDirectory("rea-skill-root-home-");
+    const project = await createTestTempDirectory("rea-skill-root-project-");
+    const [shared] = skillDestinations(home, [], {}, process.platform, project);
+    if (shared === undefined) throw new Error("Missing shared destination");
+    expect(shared.path).toBe(
+      join(project, ".agents", "skills", PRODUCT_IDENTITY.skillName),
+    );
+    const [claudeCode] = skillDestinations(
+      home,
+      ["claude_code"],
+      {},
+      process.platform,
+      project,
+    );
+    if (claudeCode === undefined)
+      throw new Error("Missing Claude Code destination");
+    expect(claudeCode.path.startsWith(project)).toBe(false);
+  });
+
+  it("installs, detects staleness, and reads identity at the selected root", async () => {
+    const home = await createTestTempDirectory("rea-skill-root-home-");
+    const project = await createTestTempDirectory("rea-skill-root-project-");
+    expect(
+      await canonicalSkillNeedsInstall(
+        home,
+        [],
+        {},
+        process.platform,
+        undefined,
+        project,
+      ),
+    ).toBe(true);
+    const installed = await installCanonicalSkill(
+      home,
+      [],
+      {},
+      process.platform,
+      undefined,
+      undefined,
+      project,
+    );
+    expect(installed).toEqual({ ok: true, value: "installed" });
+    const [shared] = skillDestinations(home, [], {}, process.platform, project);
+    if (shared === undefined) throw new Error("Missing shared destination");
+    await access(join(shared.path, "SKILL.md"));
+    // Nothing was written under the caller's home directory.
+    await expect(
+      access(join(home, ".agents", "skills", PRODUCT_IDENTITY.skillName)),
+    ).rejects.toThrow();
+    expect(
+      await canonicalSkillNeedsInstall(
+        home,
+        [],
+        {},
+        process.platform,
+        undefined,
+        project,
+      ),
+    ).toBe(false);
+    expect(
+      await readInstalledSkillIdentity(
+        home,
+        [],
+        {},
+        process.platform,
+        undefined,
+        project,
+      ),
+    ).toMatchObject({
+      canonical: true,
+      version: PRODUCT_IDENTITY.skillVersion,
+    });
+  });
 });

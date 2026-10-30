@@ -67,6 +67,12 @@ const registerSetupCommand = (
         .array(skillClientSchema)
         .default([])
         .describe("Existing client skill destination to update; repeatable"),
+      skillRoot: z
+        .string()
+        .optional()
+        .describe(
+          "Root directory for the unscoped 'shared' skill destination, in place of the home directory; writes <skillRoot>/.agents/skills instead of ~/.agents/skills. Leaves every per-client skill path (Claude Code, Cursor, ...) unaffected. Use with --skill-client shared to scope the skill to one project directory.",
+        ),
       toolFamilies: z
         .string()
         .optional()
@@ -130,6 +136,12 @@ const registerDoctorCommand = (
         .boolean()
         .optional()
         .describe("Require the installed REA skill identity to be aligned"),
+      skillRoot: z
+        .string()
+        .optional()
+        .describe(
+          "Root directory used for the unscoped 'shared' skill destination when it was installed with --skill-root; checks <skillRoot>/.agents/skills instead of ~/.agents/skills",
+        ),
     }),
     run: ({ options }) =>
       withCommandCancellation((signal) =>
@@ -141,7 +153,7 @@ const registerDoctorCommand = (
             ]);
           return runDoctorOwned(
             options.target,
-            createSystemDoctorHost(environment, signal),
+            createSystemDoctorHost(environment, signal, options.skillRoot),
             doctorScope(options),
           );
         }),
@@ -209,6 +221,7 @@ interface SetupCommandOptions {
   readonly installHopper: boolean;
   readonly client: readonly string[];
   readonly skillClient: readonly string[];
+  readonly skillRoot?: string | undefined;
   readonly toolFamilies?: string | undefined;
   readonly allDetected: boolean;
   readonly skill?: boolean | undefined;
@@ -234,7 +247,11 @@ const runSetupCommand = async (
     ]);
   const result = await runSetup(
     setupRunOptions(input, interactive, hasExplicitScope),
-    systemSetupHost(createSystemDoctorHost(environment), environment),
+    systemSetupHost(
+      createSystemDoctorHost(environment, undefined, options.skillRoot),
+      environment,
+      options.skillRoot,
+    ),
     interactive
       ? (actions, context) =>
           confirmInteractiveSetup(actions, options.accessible, context)

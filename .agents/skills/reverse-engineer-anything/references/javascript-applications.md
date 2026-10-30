@@ -1,5 +1,7 @@
 # JavaScript and Electron application artifacts
 
+## Recover source before you analyze it
+
 For captured or bundled JavaScript that needs readable source recovery, use
 `recover_javascript_sources` with an absolute `path` and absent
 `output_directory`. Supply related runtime/shared/lazy files in
@@ -8,61 +10,90 @@ directory together. Each input retains its own snapshot, digest and byte-range
 provenance; inputs and recovered code are never executed. Recovery requires a
 caller-supplied Wakaru on Linux x64; see [the recovery guide](https://github.com/morluto/rea/blob/main/docs/javascript-recovery.md).
 
-Use `analyze_javascript_application` directly on the operator-supplied ASAR or
-extracted tree. When the question concerns known source paths and the connected
-schema advertises `source_paths`, select exact inventoried paths such as
+## Point analysis at the artifact
+
+Call `analyze_javascript_application` directly on the operator-supplied ASAR
+or extracted tree.
+
+**To scope the call to known paths,** select exact inventoried paths through
+`source_paths` when the connected schema advertises it — for example
 `["package.json", "main.js", "preload.js"]`. Include supporting manifests or
-source maps explicitly; dependencies are not implicitly analyzed. REA retains
-the complete artifact inventory and identity but reads source text and analyzes
-only selected files. The result and summary record `source_selection`; files
-outside scope and their relationships remain unknown, so partial application
-coverage does not mean the selected source failed. Use repeated `--source-path`
-on either static application CLI route, or `--source-paths-json` with a JSON
-file for selections too long for one command line. Omit the selection when the
-question requires complete application analysis; `source_paths: []` is invalid,
-not an unfiltered request. `detail: "summary"` reduces delivery
-and does not by itself reduce analysis work.
+source maps explicitly; dependencies are not implicitly analyzed. REA still
+retains the complete artifact inventory and identity, but it reads source text
+and analyzes only the selected files. The result and summary record
+`source_selection`; files outside scope and their relationships stay unknown,
+so partial application coverage does not mean the selected source failed.
 
-ASAR header/index admission defaults to 16 MiB / 16777216 bytes;
-an admission error names `asar.max_header_bytes` and its bounds (at most
-256 MiB). Call `update_analysis_settings` with that setting, `action: "set"`
-and enough bytes, then retry the same full-archive request. No inspection or
-REA restart is required. `REA_ASAR_MAX_HEADER_BYTES` seeds future REA processes.
-`source_paths`, `detail`, and `max_heap_mb` do not bypass or raise header admission.
-Runtime JavaScript timeout/heap defaults are also editable; explicit per-call
-`analysis_timeout_ms` and `max_heap_mb` take precedence.
+**From the CLI,** repeat `--source-path` on either static application CLI
+route, or use `--source-paths-json` with a JSON file when the selection is too
+long for one command line.
 
-Exact `#alias` specifiers resolve through the importer's
-enclosing package `imports` map to package-local files; nested `node_modules`
-packages use their own map. Wildcard, recursive, and external-package import
-targets stay unresolved with that limitation. When size is unknown or large and the connected schema advertises
-`detail`, request `detail: "summary"`. This returns an `inspect_analysis_view`
-Evidence record with a distinct ID and a `normalized_result.parent_evidence_id`
-for the complete retained application analysis. Source-map contents are part of
-that static analysis. Read findings, coverage, limitations and unknowns, then
-follow a specific unanswered question. Older servers without `detail` return
-the complete application Evidence inline when it fits.
+**For complete analysis,** omit the selection — `source_paths: []` is invalid,
+not a request for unfiltered analysis.
 
-When the connected schema advertises `max_heap_mb` and `analysis_timeout_ms`,
-these select the isolated source analyzer's old-space heap and per-source
-deadline. Defaults are 1024 MiB and 300000 ms. They do not change the MCP
-process heap or the client's tool deadline. For a host timeout without REA
-output, use the [deadline recovery guide](connection-and-recovery.md#distinguish-client-and-server-deadlines)
-instead of raising the server budget. A Bun-hosted REA does not enforce the heap choice; on Windows it
-instead limits the analyzer's committed memory to that choice plus a 512 MiB
-runtime reserve.
-Resource-limited analyses preserve completed static facts and
-report partial semantic coverage with specific unknown scopes; this does not
-mean the source is malformed. Inspect those limits before retrying a source.
-When expanded relationships exceed the parent's available memory, inspect the
-file's modules item view for retained `static_analysis` and
-`semantic_module_analysis`. Their facts remain available even when graph links
-are unknown. Cumulative result exhaustion can stop analysis before every file
-is examined; the inventory and remaining unknown scopes distinguish that case.
-Timeout or cancellation after source analysis begins retains partial Evidence
-in the same session. A returned `error.details.partial_observation` reference
-can be supplied directly to `inspect_analysis_view`. If the SDK cancels locally, retrieve its recorded ID from
-the Evidence bundle before inspecting the partial analysis.
+Exact `#alias` specifiers resolve through the importer's enclosing package
+`imports` map to package-local files; nested `node_modules` packages use their
+own map. Wildcard, recursive, and external-package import targets stay
+unresolved under that same limitation.
+
+## Raise the ASAR header ceiling when admission fails
+
+ASAR header/index admission defaults to 16 MiB / 16777216 bytes. An admission
+error names `asar.max_header_bytes` and its bounds (at most 256 MiB) — call
+`update_analysis_settings` with that setting, `action: "set"`, and enough
+bytes, then retry the same full-archive request. No inspection or REA restart
+is required. `REA_ASAR_MAX_HEADER_BYTES` seeds future REA processes.
+`source_paths`, `detail`, and `max_heap_mb` do not bypass or raise header
+admission.
+
+## Ask for the summary when size is unknown
+
+When size is unknown or large and the connected schema advertises `detail`,
+request `detail: "summary"`. This returns an `inspect_analysis_view` Evidence
+record with a distinct ID and a `normalized_result.parent_evidence_id` for the
+complete retained application analysis — source-map contents are part of that
+static analysis. Read findings, coverage, limitations and unknowns, then
+follow one specific unanswered question rather than pulling more than you
+need. `detail: "summary"` reduces delivery, not analysis work — the full
+analysis still runs underneath it. Older servers without `detail` return the
+complete application Evidence inline when it fits.
+
+## Tune heap and timeout, and read what a limit leaves behind
+
+**Defaults.** When the connected schema advertises `max_heap_mb` and
+`analysis_timeout_ms`, they select the isolated source analyzer's old-space
+heap and per-source deadline — 1024 MiB and 300000 ms by default. Runtime
+JavaScript timeout/heap defaults are also editable this way; an explicit
+per-call `analysis_timeout_ms` or `max_heap_mb` takes precedence. Neither
+changes the MCP process heap or the client's tool deadline.
+
+**On a host timeout with no REA output,** use the
+[deadline recovery guide](connection-and-recovery.md#distinguish-client-and-server-deadlines)
+instead of raising the server budget.
+
+**On Bun or Windows,** enforcement differs: a Bun-hosted REA does not enforce
+the heap choice at all; on Windows it instead limits the analyzer's committed
+memory to that choice plus a 512 MiB runtime reserve.
+
+**When a resource limit is hit,** the analysis preserves completed static
+facts and reports partial semantic coverage with specific unknown scopes —
+that is not evidence the source is malformed. Inspect those limits before
+retrying a source.
+
+**When expanded relationships exceed the parent's available memory,** inspect
+the file's modules item view for retained `static_analysis` and
+`semantic_module_analysis`; their facts remain available even when graph
+links are unknown.
+
+**Cumulative result exhaustion** can stop analysis before every file is
+examined; the inventory and remaining unknown scopes are what distinguish
+that case from a clean finish.
+
+**On timeout or cancellation** after source analysis has begun, partial
+Evidence is retained in the same session. A returned
+`error.details.partial_observation` reference can be supplied directly to
+`inspect_analysis_view`. If the SDK cancels locally, retrieve its recorded ID
+from the Evidence bundle before inspecting the partial analysis.
 
 ## Inventory route candidates without returning the application graph
 
@@ -193,38 +224,47 @@ while the session remains open. If the parent ID was lost from the preview,
 use the prior analysis summary or explicit ledger entries to recover it; do
 not invent an ID or rerun analysis just to reproduce the same display.
 
+## Static syntax isn't proof of runtime behavior
+
 BrowserWindow preferences, preload and contextBridge surfaces, IPC
-registrations, utility processes, and native binding requests are static syntax
-observations. Only a unique exact literal IPC channel match supports an inferred
-pairing. Dynamic or ambiguous channels remain unresolved. A requested `.node`
-member is not a verified native export. Never claim runtime reachability,
-registration, defaults, or policy enforcement from static analysis.
+registrations, utility processes, and native binding requests are static
+syntax observations, nothing more. Only a unique exact literal IPC channel
+match supports an inferred pairing — dynamic or ambiguous channels stay
+unresolved, and a requested `.node` member is not a verified native export.
+Never claim runtime reachability, registration, defaults, or policy
+enforcement from static analysis.
+
+## Compare versions on durable identity, not module order
 
 For version comparison, analyze each version once, then call
 `compare_application_versions`. Accept only its digest, source-map, structural
-fingerprint, or non-module semantic matches. Module ordinals and minified names
-are not persistent identity. Report added or removed only with complete
+fingerprint, or non-module semantic matches — module ordinals and minified
+names are not persistent identity. Report added or removed only with complete
 opposite-side coverage; otherwise report unknown.
 
-When the question asks how one exact exported callable's returned object shape
-changed, analyze each version once and then call
-`compare_javascript_export_shapes` with explicit module paths and export names.
-Use the returned IDs on the same connection, or complete inline Evidence
-records, from both analysis calls. Accept variant
-pairing only through the tool's unique exact literal discriminant. Read
-`property_inventories` and each change's `presence` before treating `unknown` as
-"the name was not observed": inventories list observed property names even when
-values stay unknown, with a `source_range` for each paired or unpaired variant.
-Array holes and mutation-invalidated slots are not observed properties.
-Complete parent coverage reports presence-only
-`added`/`removed` independently of unresolved values. Cite the
-comparison Evidence and report JSON Pointer changes; dynamic values, ambiguous
-variants, and incomplete parent-property coverage stay unknown. This is static
-inference, not runtime behavior. When runtime semantics are needed, run
-behavioral probes against the relevant application versions and capture them
-through the available browser, Electron, or process workflows.
+## Compare one export's returned shape across versions
 
-## Reusing application Evidence
+When the question asks how one exact exported callable's returned object
+shape changed, analyze each version once and then call
+`compare_javascript_export_shapes` with explicit module paths and export
+names, using the returned IDs on the same connection, or complete inline
+Evidence records, from both analysis calls. Accept variant pairing only
+through the tool's unique exact literal discriminant.
+
+Read `property_inventories` and each change's `presence` before treating
+`unknown` as "the name was not observed": inventories list observed property
+names even when values stay unknown, with a `source_range` for each paired or
+unpaired variant. Array holes and mutation-invalidated slots are not observed
+properties. Complete parent coverage reports presence-only `added`/`removed`
+independently of unresolved values.
+
+Cite the comparison Evidence and report JSON Pointer changes; dynamic values,
+ambiguous variants, and incomplete parent-property coverage stay unknown. This
+is static inference, not runtime behavior. When runtime semantics are needed,
+run behavioral probes against the relevant application versions and capture
+them through the available browser, Electron, or process workflows.
+
+## Reuse application Evidence across calls
 
 When advertised by the connected server, application trace and compare tools
 accept complete inline Evidence or
@@ -232,14 +272,17 @@ accept complete inline Evidence or
 for their application input (`application`, or `left`/`right`). `inspect_analysis_view`
 uses the same retained-reference form in `source`, or portable inline Evidence,
 to project a summary, module page, or one module with its recorded observations.
-This notation is
-a template: replace it with the actual returned ID. Versions before 4.1.0 accept only full
-inline Evidence. Use the exact ID
-returned by the producer on the same MCP connection. Resolution does not run
-analysis or select a provider; findings remain inline. Native observation
-arrays still take full Evidence. `close_binary` clears retained references;
-export a bundle before closing, or supply portable inline Evidence in another
-connection. A missing reference includes its ID and recovery guidance.
+This notation is a template: replace it with the actual returned ID. Versions
+before 4.1.0 accept only full inline Evidence. Use the exact ID returned by
+the producer on the same MCP connection. Resolution does not run analysis or
+select a provider; findings remain inline. Native observation arrays still
+take full Evidence.
+
+`close_binary` clears retained references: export a bundle before closing, or
+supply portable inline Evidence in another connection. A missing reference
+includes its ID and recovery guidance.
+
+## Pull exact file or native metadata without a full reread
 
 For exact file/native metadata or processing gaps, use
 `view: {kind: "javascript-facts", where: {paths: ["package.json"]}, property_keys: ["name", "operation", "analysis_status"], limit: 32}`.

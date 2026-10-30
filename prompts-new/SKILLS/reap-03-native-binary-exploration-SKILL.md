@@ -7,6 +7,10 @@ description: REA prompt pack:  Native binary exploration (5 ready-to-paste promp
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`. The goal is to learn how a real,
+shipped binary is built, so you can apply the same patterns yourself.
+
 ### Understand an executable
 
 ```text

@@ -12,4 +12,4 @@ Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>
 3. **Separate fact / inference / unknown.** The three-bucket format keeps hypotheses honest.
 4. **Static first.** Say "do not execute the application" until you actually need runtime observation.
 5. **End with a deliverable.** SPEC.md, a reader script, a port plan, a minimal rebuild — a concrete artifact forces the agent to verify its own claims.
-6. **State the scope out loud.** "Lab machine I own", "offline single-player", "document, don't bypass" — the framing keeps results usable for research and reporting.
+6. **State the scope out loud.** "Lab machine I own", "offline single-player", "a documented assessment of my own product" — the framing keeps results usable for research and reporting.

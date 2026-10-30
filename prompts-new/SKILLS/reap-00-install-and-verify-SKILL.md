@@ -7,6 +7,9 @@ description: REA prompt pack:  Install & verify (0 ready-to-paste prompts). Use 
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`.
+
 ```text
 Install REA and connect it to this agent using: npx rea-agents@latest setup
 

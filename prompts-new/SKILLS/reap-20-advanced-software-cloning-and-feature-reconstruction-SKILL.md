@@ -7,8 +7,10 @@ description: REA prompt pack:  Advanced software cloning & feature reconstructio
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
-> Clean-room rules unchanged: extract behavior and interfaces, never code,
-> assets, branding or licensing mechanisms. Interoperability and research use.
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`. Clean-room rules unchanged:
+extract behavior and interfaces, never code, assets, branding or licensing
+mechanisms. Interoperability, learning, and research use.
 
 ### Full protocol reimplementation for interoperability
 

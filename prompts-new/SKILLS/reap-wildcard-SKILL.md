@@ -7,6 +7,9 @@ description: REA prompt pack:  Wildcard prompt (0 ready-to-paste prompts). Use w
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
+Scope: your own software, a CTF/crackme, or a target you're otherwise
+authorized to study — see `DISCLAIMER.md`.
+
 ```text
 Use REA to understand how <FEATURE> works in <PATH TO APPLICATION>.
 

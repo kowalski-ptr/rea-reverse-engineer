@@ -2,7 +2,10 @@
 
 ## Product and Authority
 
-REA is a local-only reverse-engineering tool with shared CLI/MCP workflows. Distinguish observations, derivations, inferences, and unknowns; preserve Evidence provenance and session semantics through both adapters. Provider support and setup live in [README.md](README.md#choosing-a-deep-analysis-provider) and its linked guides.
+REA is a local-only tool for learning how real software is built, so a user
+can study the best patterns they find and design their own software for
+private use; it also serves authorized security research and education. It
+shares CLI/MCP workflows. Distinguish observations, derivations, inferences, and unknowns; preserve Evidence provenance and session semantics through both adapters. Provider support and setup live in [README.md](README.md#choosing-a-deep-analysis-provider) and its linked guides.
 
 Follow the [contribution scope and fail-closed integration rule](CONTRIBUTING.md#contribution-scope). Do not integrate capabilities while material scope, authority, side-effect, or required verification questions remain unresolved. For new providers or capabilities involving target execution, injection, mutation, or protection recovery, seek the required maintainer scope decision before substantial implementation for integration. Welcome early proposals, small exploratory prototypes, and draft PRs that help resolve questions; they do not authorize integration.
 
@@ -11,6 +14,21 @@ Ghidra uses ephemeral databases without modifying executable bytes or controllin
 Configuration changes must be additive and idempotent, with backups. Installers must not install or upgrade unrelated software, including Homebrew, Node.js, npm, Java, or Ghidra. Ghidra and IDA are bring-your-own. `rea setup` must show its planned changes and require approval before writing files or installing Hopper.
 
 Preserve caller-selected inputs and local evidence, including output, URLs, paths, digests, and metadata. Redact transport authentication credentials and explicitly marked sensitive values; do not infer secrecy from names or text patterns. Do not persist the ambient environment merely because a child inherits it.
+
+## Skills map
+
+Agent-facing instructions live under `.agents/skills/`, one directory per skill, discovered by directory name. Load the narrowest one that matches the task instead of re-deriving its guidance from this file:
+
+| Skill | Load it for |
+| --- | --- |
+| [`reverse-engineer-anything`](.agents/skills/reverse-engineer-anything/SKILL.md) | Running an actual REA investigation: connecting, routing a target to its tool, paging Evidence, planning a multi-feature pass. |
+| [`rea-case-files`](.agents/skills/rea-case-files/SKILL.md) | Turning a vague "reverse-engineer this" into a sharp, evidence-first prompt — ready-to-paste templates by target domain. |
+| [`rea-contract-design`](.agents/skills/rea-contract-design/SKILL.md) | Designing or changing a tool contract, CLI/MCP shape, or Evidence semantics. |
+| [`rea-investigation-efficiency`](.agents/skills/rea-investigation-efficiency/SKILL.md) | Finding and fixing a measured bottleneck in a provider or shared analysis workflow. |
+| [`rea-suite-integrity`](.agents/skills/rea-suite-integrity/SKILL.md) | Auditing whether CI/test suites still catch real regressions, or cutting their cost without losing that protection. |
+| [`rea-release-chronicle`](.agents/skills/rea-release-chronicle/SKILL.md) | Preparing a changelog or GitHub release with verified contributor credit. |
+
+The last four are contributor-facing and apply to this repository's own development; the first two are what REA ships to an analyst's agent.
 
 ## Architecture and Cleanup
 

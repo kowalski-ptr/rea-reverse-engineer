@@ -906,6 +906,14 @@ export const clientSkillDirectories = (
   clientIds: readonly string[] | undefined,
   environment: Readonly<NodeJS.ProcessEnv> = {},
   platform: NodeJS.Platform = process.platform,
+  /**
+   * Caller-selected root for the unscoped "shared" destination only.
+   * Every per-client path (Claude Code, Cursor, ...) keeps resolving against
+   * `home`, matching that client's own established convention; `skillRoot`
+   * lets one project scope just the `.agents/skills` fallback to itself
+   * instead of the caller's home directory.
+   */
+  skillRoot?: string,
 ): {
   readonly directories: readonly {
     readonly client: string;
@@ -930,7 +938,11 @@ export const clientSkillDirectories = (
       : clientIds.length === 0
         ? ["shared"]
         : clientIds;
-  const sharedDirectory = appendCallerPath(home, ".agents/skills", platform);
+  const sharedDirectory = appendCallerPath(
+    skillRoot ?? home,
+    ".agents/skills",
+    platform,
+  );
   const destinations = new Map<string, { client: string; directory: string }>();
   for (const client of selected) {
     const definition = definitions.find(({ name }) => name === client);

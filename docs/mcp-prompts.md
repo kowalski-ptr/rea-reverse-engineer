@@ -4,6 +4,13 @@ REA exposes six provider-neutral investigation workflows through the MCP
 `prompts` capability. They complement the generated tool catalog; they do not add, remove, or
 invoke tools by themselves.
 
+This is the MCP protocol's own `prompts` primitive — discoverable through
+`prompts/list` and rendered with arguments by a client. For ready-to-paste
+natural-language prompt *text* you hand an agent directly, organized by
+reverse-engineering target, see the
+[`rea-case-files`](https://github.com/morluto/rea/blob/main/.agents/skills/rea-case-files/SKILL.md)
+skill instead; the two are complementary, not interchangeable.
+
 ## Prompt inventory
 
 | Prompt                            | Purpose                                                                              |

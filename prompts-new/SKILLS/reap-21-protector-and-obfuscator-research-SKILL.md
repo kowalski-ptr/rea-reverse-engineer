@@ -1,17 +1,18 @@
 ---
 name: reap-21-protector-and-obfuscator-research
-description: REA prompt pack:  Protector & obfuscator research (7 ready-to-paste prompts). Use when doing reverse-engineering investigation of protector & obfuscator research with REA (rea.tools) via an AI coding agent.
+description: REA prompt pack: Protector & obfuscator research (7 ready-to-paste prompts). Use for a documented security assessment of packers, protectors, and obfuscators with REA (rea.tools) via an AI coding agent.
 ---
 
 # REAP — 21. Protector & obfuscator research
 
 Part of REAP (REA Investigation Prompts). Replace everything in <angle brackets>; keep each request focused on one feature. Demand file/function/address evidence and separate facts from hypotheses.
 
-> Scope: protectors on **software you own** (hardening assessment), malware
-> samples, crackmes/CTFs, or vendor-authorized research. These prompts ask the
-> agent to *identify, characterize and document* protections and to plan
-> analysis — not to produce weaponized bypasses of third-party commercial
-> software.
+Scope: protectors on **software you own** (hardening assessment), samples
+you're authorized to analyze, crackmes/CTFs, or vendor-authorized research.
+See this project's authorized-use policy in `DISCLAIMER.md`. These prompts
+ask the agent to *identify, characterize and document* protections and to
+plan analysis — producing a documented assessment, not a circumvention of
+third-party commercial software.
 
 ### Protector fingerprinting
 
@@ -45,13 +46,13 @@ Document each step with addresses.
 ```text
 Use REA on <binary I own or a crackme> that uses VM-style protection.
 
-Map the protection surface without trying to defeat it: locate the VM entry
+Map the protection surface: locate the VM entry
 stubs, the context structure, the handler dispatch table, and classify which
 functions are virtualized versus native. For the virtualized regions, estimate
 the opcode set size and identify handlers you can already recognize (memory
 read/write, arithmetic, branch). Deliver a coverage map: function → protected
 or plain → confidence, with evidence. This map is the input for a later
-deobfuscation plan, not a bypass.
+deobfuscation study, not a circumvention.
 ```
 
 ### Anti-debug / anti-VM / anti-tamper inventory
@@ -68,7 +69,7 @@ failure. Then — for software I own — state which checks are load-bearing for
 security and which are cosmetic, with recommended fixes.
 ```
 
-### Appdome / WhiteCrypt / Proton Shield-style mobile hardening study
+### Commercial mobile hardening study
 
 ```text
 Use REA on <APK/AAB> that uses a commercial hardening layer (Appdome-style
@@ -101,14 +102,15 @@ mechanism for a security review of my own product.
 
 ```text
 I own <my application> and its protection stack (<protector names>). Use REA to
-assess the protection as an attacker would measure it: coverage (what % of
+assess the protection's real-world coverage: coverage (what % of
 license-critical and security-critical code is actually protected vs. plain),
 layered checks (which fail silently vs. loudly), the weakest protected path to
 <the feature being protected>, and anti-analysis depth.
 
 Deliver a risk-ranked report: each weakness with function/address evidence,
 the protection feature that should have covered it, and a concrete hardening
-recommendation. Document weaknesses; do not produce a working bypass.
+recommendation. The deliverable is a documented weakness report, not a
+working circumvention.
 ```
 
 ---
