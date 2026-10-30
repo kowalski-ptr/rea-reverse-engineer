@@ -12,7 +12,7 @@ level — then build your own software from what you learned.** REA is a
 learning and security-education tool: it helps you study how real,
 shipped software is built, so you can design and build your own for
 private use, harden your own products, or do authorized security research.
-See [DISCLAIMER.md](DISCLAIMER.md) for the full authorized-use policy.
+See `DISCLAIMER.md` for the full authorized-use policy.
 
 [![npm version](https://img.shields.io/npm/v/rea-agents?style=flat-square&color=cb3837)](https://www.npmjs.com/package/rea-agents)
 [![MCP tool catalog](https://img.shields.io/badge/MCP-tool_catalog-5c4ee5?style=flat-square)](docs/mcp-contracts.md#generated-catalog)
@@ -118,7 +118,7 @@ Replace Notes with your target app and the feature you want to understand.
 
 ### Need a sharper prompt?
 
-The [`rea-case-files`](.agents/skills/rea-case-files/SKILL.md) skill is a
+The `rea-case-files` skill (`.agents/skills/rea-case-files/`) is a
 companion prompt library: ready-to-paste, evidence-first templates organized
 by target — native binaries, web/Electron, Android, games, firmware,
 kernel/drivers, vulnerability review, malware, anti-cheat/protector
